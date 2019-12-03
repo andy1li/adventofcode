@@ -25,10 +25,10 @@ def fst_star(agg):
     return guard * minute
 
 def snd_star(agg):
-    (_, minute), guard = (max(
+    (_, minute), guard = max(
         (max((c, m) for m, c in agg[guard].items()), guard)
         for guard in agg
-    ))
+    )
     return guard * minute
 
 TEST = '''[1518-11-01 00:00] Guard #10 begins shift

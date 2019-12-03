@@ -17,8 +17,8 @@ def snd_star(ids):
             return ''.join( x 
                 for x, y in zip(a, b)
                 if x == y
-            )
-    
+            ) 
+            
 if __name__ == '__main__':
     ids = [l.strip() for l in open('data/day02.in')]
     print(fst_star(ids))

@@ -1,7 +1,7 @@
 # https://adventofcode.com/2019/day/2
 
 from itertools import product
-from operator import add, mul
+from operator  import add, mul
 
 OPERATION = {1: add, 2: mul}
 
