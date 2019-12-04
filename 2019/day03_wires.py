@@ -1,44 +1,32 @@
 # https://adventofcode.com/2019/day/3
 
-from collections import defaultdict
+DELTA = {'U': (0, 1), 'D': (0, -1), 'R': (1, 0), 'L': (-1, 0)}
 
-DELTA = {
-    'U': (0, 1), 'D': (0, -1),
-    'R': (1, 0), 'L': (-1, 0)
-}
-
-def parse(input): 
-    return [line.split(',') for line in input]
+def parse(input): return [*map(walk, input)]
 
 def walk(wire):
-    i = x = y = 0
-    for section in wire:
+    grid = {}; i = x = y = 0
+    for section in wire.split(','):
         direction, steps = section[0], int(section[1:])
         dx, dy = DELTA[direction]
         for _ in range(steps):
             i += 1; x += dx; y += dy
-            yield i, x, y
-
-def fst_path(wires):
-    grid = defaultdict(int)
-    for i, x, y in walk(wires[0]):
-        if not grid[x, y]: grid[x, y] = i
+            if (x, y) not in grid: grid[x, y] = i
     return grid
 
 def fst_star(wires): 
-    grid = fst_path(wires)
-    return min( abs(x) + abs(y)
-        for i, x, y in walk(wires[1])
-        if grid[x, y]
+    a, b = wires
+    return min(
+        abs(x) + abs(y) 
+        for x, y in set(a) & set(b)
     )
 
 def snd_star(wires): 
-    grid = fst_path(wires)
-    return min( grid[x, y] + i
-        for i, x, y in walk(wires[1])
-        if grid[x, y]
+    a, b = wires
+    return min( 
+        a[x, y] + b[x, y]
+        for x, y in set(a) & set(b)
     )
-
 
 TEST1 = '''R8,U5,L5,D3
 U7,R6,D4,L4'''.split('\n')
