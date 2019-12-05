@@ -24,6 +24,6 @@ def snd_star(candidates):
     )
 
 if __name__ == '__main__':
-    CANDIDATES = [*map(str, range(178416, 676461+1))]
-    print(fst_star(CANDIDATES))
-    print(snd_star(CANDIDATES))
+    candidates = [*map(str, range(178416, 676461+1))]
+    print(fst_star(candidates))
+    print(snd_star(candidates))

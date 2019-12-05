@@ -5,8 +5,8 @@ from operator  import add, mul
 
 OPERATION = {1: add, 2: mul}
 
-def fst_star(original, noun=12, verb=2): 
-    code = original.copy()
+def fst_star(code, noun=12, verb=2): 
+    code = code.copy()
     i, code[1], code[2] = 0, noun, verb
     while code[i] != 99:
         op, a, b, d = code[i:i+4]
