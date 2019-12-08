@@ -3,21 +3,17 @@
 from day05_intcode_2 import run
 from itertools import chain, permutations
 
-def get_thrust(code, phases):
-    feedback = []
-    a = run(code, chain([phases[0], 0], feedback))
-    b = run(code, chain([phases[1]], a))
-    c = run(code, chain([phases[2]], b))
-    d = run(code, chain([phases[3]], c))
-    e = run(code, chain([phases[4]], d))
-    for thrust in e: feedback.append(thrust)
-    return thrust
-
 def try_phases(code, candidates=range(5)): 
-    return max(
-        get_thrust(code, phases)
-        for phases in permutations(candidates, 5)
-    )
+    def thrust(phases):
+        feedback = []
+        amp = run(code, chain([phases[0], 0], feedback))
+        for p in phases[1:]: 
+            amp = run(code, chain([p], amp))
+            
+        for thrust in amp: feedback.append(thrust)
+        return thrust
+
+    return max(map(thrust, permutations(candidates)))
 
 TEST1 = [3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0]
 TEST2 = [3,23,3,24,1002,24,10,24,1002,23,-1,23,

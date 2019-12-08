@@ -14,25 +14,22 @@ INSTRUCTION = {
     8: (eq,    4)
 }
 
-def extract_modes(op):
+def parse_modes(op):
     op = str(op).zfill(4)
     return int(op[-2:]), [*map(int, reversed(op[:-2]))]
-
-def read(code, params, modes, idx):
-    return params[idx] if modes[idx] else code[params[idx]]
 
 def run(code, input): 
     code, ip = code.copy(), 0
     while code[ip] != 99:
-        op, modes = extract_modes(code[ip])
+        op, modes = parse_modes(code[ip])
         func, length = INSTRUCTION[op]
         p = code[ip+1:ip+4]
-        r = partial(read, code, p, modes)
+        v = lambda i: p[i] if modes[i] else code[p[i]]
 
-        if op in [1, 2, 7, 8]: code[p[2]] = func(r(0), r(1))
+        if op in [1, 2, 7, 8]: code[p[2]] = func(v(0), v(1))
         elif op == 3         : code[p[0]] = next(input)
-        elif op == 4         : yield r(0) 
-        elif op in [5, 6]    : ip = r(1) if func(r(0)) else ip+3
+        elif op == 4         : yield v(0)
+        elif op in [5, 6]    : ip = v(1) if func(v(0)) else ip+3
 
         ip += length
 
