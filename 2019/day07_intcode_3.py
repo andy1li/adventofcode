@@ -1,6 +1,6 @@
 # https://adventofcode.com/2019/day/7
 
-from day05_intcode_2 import run
+from intcode import run
 from itertools import chain, permutations
 
 def try_phases(code, candidates=range(5)): 

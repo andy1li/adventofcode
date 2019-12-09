@@ -1,5 +1,7 @@
 # https://adventofcode.com/2019/day/8
 
+from matplotlib import pyplot as plt
+
 def parse(data, width, height):
     n = width * height
     return [ data[i:i+n]
@@ -12,18 +14,20 @@ def check(data):
 
 def see(pixel):
     for x in pixel:
-        if x != '2': 
-            return '⬛' if x=='0' else '⬜'
+        if x != '2': return int(x)
 
 def decode(data, width, height):
     data = parse(data, width, height)
     check(data)
 
     image = [*map(see, zip(*data))]
-    for i in range(0, len(image), width):
-        print(''.join(image[i:i+width]))
-    print()
+    image = [ image[i:i+width]
+        for i in range(0, len(image), width)
+    ]
+
+    plt.imshow(image)
+    plt.show()
 
 if __name__ == '__main__':
-    decode('0222112222120000', 2, 2)
+    # decode('0222112222120000', 2, 2)
     decode(open('data/day08.in').read(), 25, 6)

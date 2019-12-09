@@ -17,7 +17,7 @@ def both_stars(num_players, last_score):
     return max(scores)
 
 if __name__ == '__main__':
-    assert both_stars(17, 1104) == 2764
+    assert both_stars(30, 5807) == 37305
 
     print(both_stars(441, 71032))
     print(both_stars(441, 71032*100))
