@@ -20,19 +20,17 @@ def parse_stars(input):
     ]
 
 def visualize(stars, MAGIC):
-    min_x = min_y = float('inf')
-    max_x = max_y = -min_x
-    for star in stars:
-        min_x, min_y = min(min_x, star.x), min(min_y, star.y)
-        max_x, max_y = max(max_x, star.x), max(max_y, star.y)
+    min_x = min(s.x for s in stars)
+    min_y = min(s.y for s in stars)
+    max_x = max(s.x for s in stars)
+    max_y = max(s.y for s in stars)
 
     if max(max_x-min_x, max_y-min_y) <= MAGIC:
         print() # print(min_x, min_y, max_x, max_y)
         xys = set((x, y) for x, y, _, _ in stars)
         for y in range(min_y, max_y+1):
             for x in range(min_x, max_x+1):
-                # print('#' if (x, y) in xys else ' ', end='')
-                print('🌟' if (x, y) in xys else '  ', end='')
+                print('*' if (x, y) in xys else ' ', end='')
             print()
         return True
 

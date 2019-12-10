@@ -24,9 +24,7 @@ def decode(data, width, height):
     image = [ image[i:i+width]
         for i in range(0, len(image), width)
     ]
-
-    plt.imshow(image)
-    plt.show()
+    plt.imshow(image); plt.show()
 
 if __name__ == '__main__':
     # decode('0222112222120000', 2, 2)
