@@ -19,8 +19,8 @@ def parse_modes(op):
     op = str(op).zfill(5)
     return int(op[-2:]), [*map(int, reversed(op[:-2]))]
 
-def run(code, input, size=2048): 
-    mem = code.copy() + [0]*(size-len(code))
+def run(code, input, extra=1024): 
+    mem = code.copy() + [0] * extra
     
     ip = rb = 0
     while mem[ip] != 99:
@@ -35,7 +35,7 @@ def run(code, input, size=2048):
         def a(i):
             return p[i] if modes[i] < 2 else rb+p[i]
 
-        if op in [1, 2, 7, 8]: mem[a(2)] = func(v(0), v(1))
+        if op in [1, 2, 7, 8]: mem[a(2)] = int(func(v(0), v(1)))
         elif op == 3         : mem[a(0)] = next(input)
         elif op == 4         : yield v(0)
         elif op in [5, 6]    : ip = v(1) if func(v(0)) else ip+3

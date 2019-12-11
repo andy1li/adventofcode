@@ -2,7 +2,6 @@
 
 from collections import defaultdict
 from itertools import product
-from tqdm import trange
 
 def power(y, x, serial):
     rack_id = x + 10
@@ -29,14 +28,14 @@ def snd_star(serial):
     
     for y, x in product(range(1, 301), repeat=2):
         p = power(y, x, serial)
-        summed_area[x][y] = (
+        summed_area[y][x] = (
             - summed_area[y-1][x-1] + summed_area[y][x-1] 
             + summed_area[y-1][x]   + p
         )
         if p > max_p:
             max_p, max_y, max_x = p, y, x
 
-    for d in trange(1, 300):
+    for d in range(1, 300):
         for y, x in product(range(1, 301-d), repeat=2):
             p = (
                 summed_area[y-1][x-1] - summed_area[y+d][x-1]
@@ -48,9 +47,9 @@ def snd_star(serial):
     return max_x, max_y, max_s
 
 if __name__ == '__main__':
-    # assert power(3, 5, 8) == 4
+    assert power(5, 3, 8) == 4
     assert fst_star(18) == (33, 45)
-    # assert fst_star(42) == (21, 61)
+    assert fst_star(42) == (21, 61)
     # assert snd_star(18) == (90, 269, 16)
     # assert snd_star(42) == (232, 251, 12)
 
