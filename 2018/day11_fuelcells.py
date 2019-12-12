@@ -35,14 +35,14 @@ def snd_star(serial):
         if p > max_p:
             max_p, max_y, max_x = p, y, x
 
-    for d in range(1, 300):
-        for y, x in product(range(1, 301-d), repeat=2):
+    for s in range(1, 300):
+        for y, x in product(range(1, 301-s), repeat=2):
             p = (
-                summed_area[y-1][x-1] - summed_area[y+d][x-1]
-              - summed_area[y-1][x+d] + summed_area[y+d][x+d]
+                summed_area[y-1][x-1] - summed_area[y+s][x-1]
+              - summed_area[y-1][x+s] + summed_area[y+s][x+s]
             )
             if p > max_p:
-                max_p, max_y, max_x, max_s = p, y, x, d+1
+                max_p, max_y, max_x, max_s = p, y, x, s+1
 
     return max_x, max_y, max_s
 

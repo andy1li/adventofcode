@@ -1,7 +1,7 @@
 # https://adventofcode.com/2018/day/10
 
-from typing import NamedTuple
 from itertools import count
+from typing import NamedTuple
 import re
 
 class Star(NamedTuple):
