@@ -26,10 +26,10 @@ def step(rules, state):
     }
 
 def to_string(state):
-    start, end = min(state), max(state)+1
+    start, end = min(state), max(state)
     return ''.join(
         '#' if i in state else '.'
-        for i in range(start, end)
+        for i in range(start, end+1)
     ).strip('.')
 
 def fst_star(rules, state):
@@ -37,13 +37,13 @@ def fst_star(rules, state):
         state = step(rules, state)
     return sum(state)
 
-def snd_star(rules, state, stop=158):
-    for i in count(1): 
-        state = step(rules, state)
-        if to_string(state) == '##......##........##.......##....##.........##........##......##....##.............##....##........##.........##.............##........##...........##..........##.....##.....##.....##.....##':
-            assert sum(step(rules, state)) - sum(state) == 42
+def snd_star(rules, state):
+    for i in count(1):
+        new_state = step(rules, state)
+        # print(i, sum(state), sum(new_state) - sum(state)) 
+        if sum(new_state) - sum(state) == 42:
             return 42*(50000000000-i) + sum(state)
-
+        state = new_state
 
 TEST = '''initial state: #..#.#..##......###...###
 

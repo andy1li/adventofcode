@@ -33,13 +33,13 @@ def parse(input):
     return tracks, carts
 
 def show(tracks, carts):
-    tracks = tracks[:]
+    tracks = tracks.copy()
     for y, x, dir, _ in carts:
         tracks[y] = tracks[y][:x] + '^>v<'[dir] + tracks[y][x+1:]
     print(*tracks, sep='\n', end='\n\n')
 
 def fst_star(tracks, carts):
-    while 1:
+    while True:
         # show(tracks, carts)
         positions = {(c.y, c.x) for c in carts} 
         for i, c in enumerate(carts):
@@ -51,7 +51,7 @@ def fst_star(tracks, carts):
         carts.sort()
         
 def snd_star(tracks, carts):
-    while 1:
+    while True:
         # show(tracks, carts)
         if len(carts) == 1: return carts[0].x, carts[0].y
 

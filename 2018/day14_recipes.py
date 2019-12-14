@@ -23,7 +23,7 @@ def find(recipes, len_target, target):
     if snd_try: return len(recipes) - len_target - 1
 
 def snd_star(target):
-    target = list(map(int, str(target)))
+    target = [*map(int, str(target))]
     len_target = len(target)
 
     recipes, elves, t, i = [3, 7], [0, 1], tqdm(), 0
