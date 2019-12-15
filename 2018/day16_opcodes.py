@@ -16,25 +16,22 @@ class Sample(NamedTuple):
     after: Registers
 
 def parse_sample(input):
-    before = re.match(r'Before: \[(\d), (\d), (\d), (\d)\]', input[0]).groups()
-    after  = re.match(r'After:  \[(\d), (\d), (\d), (\d)\]', input[2]).groups()
     return Sample(
         Operation(*map(int, input[1].split())),
-        [*map(int, before)], 
-        [*map(int, after)],
+        [*map(int, re.findall('[0-9]', input[0]))], 
+        [*map(int, re.findall('[0-9]', input[2]))],
     )
 
 def parse(input):
     input = input.split('\n')
-    samples = [
+    return [
         parse_sample(input[i:i+4])
         for i in range(0, len(input), 4)
-    ]
-    return samples
+    ] 
 
 def op(opcode):
-    operator_name, a_type, b_type = opcode[:-2], opcode[-2], opcode[-1]
-    try: func = getattr(operator, operator_name)
+    op_name, a_type, b_type = opcode[:-2], opcode[-2], opcode[-1]
+    try: func = getattr(operator, op_name)
     except AttributeError: func = lambda A, _: A # 'set' not in operator
     
     def operate(regs, op):
@@ -44,9 +41,10 @@ def op(opcode):
             regs[op.B] if b_type == 'r' else op.B
         )
         return regs
+
     return operate
 
-ALL_OPS = [*map(op, [
+OPERATIONS = [*map(op, [
     'addrr', 'and_rr', 'setr_', 'seti_',
     'addri', 'and_ri', 'gtir', 'eqir', 
     'mulrr', 'or_rr',  'gtri', 'eqri',
@@ -55,7 +53,7 @@ ALL_OPS = [*map(op, [
 
 def possible_ops(sample):
     return set( op
-        for op in ALL_OPS
+        for op in OPERATIONS
         if op(sample.before, sample.op) == sample.after
     )
 
@@ -64,7 +62,7 @@ def fst_star(samples):
 
 def snd_star(samples):
     ops = {
-        opcode: set(ALL_OPS)
+        opcode: set(OPERATIONS)
         for opcode in range(16)
     }
     # Eliminate

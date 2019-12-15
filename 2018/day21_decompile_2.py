@@ -3,7 +3,7 @@
 from bitarray import bitarray
 from day19_decompile_1 import parse
 
-def fst_star(ip, ops):
+def crack(ip, ops):
     regs = [0] * 6
     while 0 <= regs[ip] < len(ops):
         if regs[5] == 28: return regs[4]
@@ -11,21 +11,22 @@ def fst_star(ip, ops):
         regs = op.code(regs, op)
         regs[ip] += 1
 
-def snd_star():
-    seen = bitarray(16774173+1)
-    random = last_random = 0
+def repeat_hash():
+    seen = bitarray(int(2**24))
+    hash = last_hash = 0
 
-    while 1: # r0 != random
-        sword  = random | 65536
-        random = 2024736
+    while True: # r0 != hash
+        sword  = hash | 65536 # set bit 17
+        hash = 2024736
 
         while sword:
-            sword, byte = divmod(sword, 256)
-            random = ((random + byte) * 65899) % 16777216
-             
-        if seen[random]: return last_random
-        seen[random] = 1; last_random = random
+            sword, byte = divmod(sword, 256) # pop byte
+            hash = ((hash + byte) * 65899) % 16777216 # 24-bit (3 bytes)
+            
+        # print('hash:', hash)
+        if seen[hash]: return last_hash
+        seen[hash] = 1; last_hash = hash
 
 if __name__ == '__main__':
-    print(fst_star(*parse(open('data/day21.in').read())))
-    print(snd_star())
+    print(crack(*parse(open('data/day21.in'))))
+    print(repeat_hash())

@@ -48,7 +48,6 @@
 26 setr 2   _ 1  'r1 = div(r1, 256)'
 27 seti 7   _ 5  jmp 8 '-> while r1 >= 256'
 
-
 'check r4 == r0?:'
 28 eqrr 4   0 2   'if r4 == r0:'
 29 addr 5   2 5   True:  jmp +r2 'halt'

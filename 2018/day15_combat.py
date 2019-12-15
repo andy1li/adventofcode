@@ -26,9 +26,8 @@ class Creature:
         self.hp -= injury
 
     def bfs_next(self):
-        q, p = deque([self.pos]), {} 
-        while q:
-            pos = q.popleft()
+        q, p = [self.pos], {} 
+        for pos in q:
             if pos in self.target_sides:
                 traceback = pos
                 while p[traceback] != self.pos:
@@ -107,7 +106,7 @@ def show(creatures):
         cave[y] = cave[y][:x] + c.race + cave[y][x+1:]
     print(*cave, sep='\n', end='\n\n')
 
-def fst_star(creatures, elf_power=3):
+def combat_outcome(creatures, elf_power=3):
     creatures = deepcopy(creatures)
     num_elves = sum(c.race=='E' for c in creatures)
     for c in creatures:
@@ -130,13 +129,13 @@ def fst_star(creatures, elf_power=3):
                     num_elves == sum(c.race=='E' for c in creatures)
                 )
 
-def snd_star(creatures):
+def enough_power(creatures):
     class ZeroLossWin:
-        def __getitem__(_, i): 
-            return fst_star(creatures, i)[1]
+        def __getitem__(self, i): 
+            return combat_outcome(creatures, i)[1]
 
-    min_attack = bisect(ZeroLossWin(), True, 4, 200)
-    return fst_star(creatures, min_attack)[0]
+    power = bisect(ZeroLossWin(), True, 4, 200)
+    return combat_outcome(creatures, power)[0]
 
 TEST1 = '''#######
 #.G...#
@@ -155,11 +154,11 @@ TEST2 = '''#######
 #######'''.split()
 
 if __name__ == '__main__':
-    assert fst_star(parse(TEST1))[0] == 27730
-    assert fst_star(parse(TEST2))[0] == 39514
-    assert snd_star(parse(TEST1)) == 4988
-    assert snd_star(parse(TEST2)) == 31284
+    assert combat_outcome(parse(TEST1))[0] == 27730
+    assert combat_outcome(parse(TEST2))[0] == 39514
+    assert enough_power(parse(TEST1)) == 4988
+    assert enough_power(parse(TEST2)) == 31284
 
     creatures = parse(open('data/day15.in'))
-    print(fst_star(creatures)[0])
-    print(snd_star(creatures))
+    print(combat_outcome(creatures)[0])
+    print(enough_power(creatures))

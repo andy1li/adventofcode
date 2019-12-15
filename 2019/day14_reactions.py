@@ -21,24 +21,22 @@ def filter_valid(needs):
         if amount > 0 and chemical != 'ORE':
             yield chemical, amount
 
-def num_ore(reactions, n=1): 
-    try:
-        needs = Counter({'FUEL': n})
-        while next(filter_valid(needs)):
-            for need_chemical, need_amount in filter_valid(needs):
-                output_amount, inputs = reactions[need_chemical]
-                times = ceil(need_amount / output_amount)
+def num_ore(reactions, n = 1): 
+    needs = Counter({'FUEL': n})
+    while list(filter_valid(needs)):
+        for need_chemical, need_amount in filter_valid(needs):
+            output_amount, inputs = reactions[need_chemical]
+            times = ceil(need_amount / output_amount)
 
-                needs[need_chemical] -= int(output_amount) * times
-                for input_chemical, input_amount in inputs.items():
-                    needs[input_chemical] += int(input_amount) * times
+            needs[need_chemical] -= int(output_amount) * times
+            for input_chemical, input_amount in inputs.items():
+                needs[input_chemical] += int(input_amount) * times
 
-    except StopIteration:
-        return needs['ORE']
+    return needs['ORE']
 
 def max_fuel(reactions): 
     class OverOneTrillion: 
-        def __getitem__(_, i): 
+        def __getitem__(self, i): 
             return num_ore(reactions, i) > 10**12
 
     return bisect_left(OverOneTrillion(), True, 1, 10**9) - 1

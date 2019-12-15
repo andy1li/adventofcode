@@ -2,16 +2,20 @@
 
 from tqdm import tqdm
 
+def step(recipes, elves):
+    s = recipes[elves[0]], recipes[elves[1]]
+    digits = map(int, str(s[0] + s[1]))
+    recipes.extend(digits)
+    elves = [
+        (elves[0] + s[0] + 1) % len(recipes),
+        (elves[1] + s[1] + 1) % len(recipes),
+    ]
+    return recipes, elves
+
 def fst_star(cutoff):
     recipes, elves = [3, 7], [0, 1]
     while len(recipes) <= cutoff + 10:
-        s = recipes[elves[0]], recipes[elves[1]]
-        digits = map(int, str(s[0] + s[1]))
-        recipes.extend(digits)
-        elves = [
-            (elves[0] + s[0] + 1) % len(recipes),
-            (elves[1] + s[1] + 1) % len(recipes),
-        ]
+        recipes, elves = step(recipes, elves)
     return ''.join(map(str, recipes[cutoff:cutoff+10]))
 
 def find(recipes, len_target, target):
@@ -28,15 +32,9 @@ def snd_star(target):
 
     recipes, elves, t, i = [3, 7], [0, 1], tqdm(), 0
     while not find(recipes, len_target, target):
-        s = recipes[elves[0]], recipes[elves[1]]
-        digits = map(int, str(s[0] + s[1]))
-        recipes.extend(digits)
-        elves = [
-            (elves[0] + s[0] + 1) % len(recipes),
-            (elves[1] + s[1] + 1) % len(recipes),
-        ]
+        recipes, elves = step(recipes, elves)
         i += 1; t.update()
-    # print(recipes[-len_target-1:], target)
+ 
     t.close()
     return find(recipes, len_target, target)
 
