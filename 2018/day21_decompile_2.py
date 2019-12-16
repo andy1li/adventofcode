@@ -16,12 +16,12 @@ def repeat_hash():
     hash = last_hash = 0
 
     while True: # r0 != hash
-        sword  = hash | 65536 # set bit 17
+        three_bytes = hash | 65536 # set bit 17
         hash = 2024736
 
-        while sword:
-            sword, byte = divmod(sword, 256) # pop byte
-            hash = ((hash + byte) * 65899) % 16777216 # 24-bit (3 bytes)
+        while three_bytes:
+            three_bytes, byte = divmod(three_bytes, 256) # pop byte
+            hash = ((hash + byte) * 65899) % 16777216 # 2 ** 24
             
         # print('hash:', hash)
         if seen[hash]: return last_hash

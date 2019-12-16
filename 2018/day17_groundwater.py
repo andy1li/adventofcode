@@ -13,12 +13,12 @@ def parse_line(line):
     xy = {}
     single, multiple = line.split(', ')
 
-    ax, num = single.split('=')
-    xy[ax] = [int(num)]
+    axis, num = single.split('=')
+    xy[axis] = [int(num)]
 
-    ax, lohi = multiple.split('=')
+    axis, lohi = multiple.split('=')
     lo, hi = map(int, lohi.split('..'))
-    xy[ax] = range(lo, hi+1)
+    xy[axis] = range(lo, hi+1)
 
     return product(xy['y'], xy['x'])
 
@@ -31,6 +31,18 @@ def parse(input):
         min_x = min(min_x, x); min_y = min(min_y, y)
         max_x = max(max_x, x); max_y = max(max_y, y)
     return clays, Bounds(min_x, min_y, max_x, max_y)
+
+def show():
+    scan = [
+        ['.' for x in range(bounds.min_x-1, bounds.max_x+2)]
+        for y in range(bounds.min_y, bounds.max_y+1)
+    ]
+    for y, x in clays: scan[y-bounds.min_y][x-bounds.min_x+1] = '#'
+    for y, x in flows: scan[y-bounds.min_y][x-bounds.min_x+1] = '|'
+    for y, x in rests: scan[y-bounds.min_y][x-bounds.min_x+1] = '~'
+
+    for row in scan: print(''.join(row))
+    print()
 
 def is_empty(y, x):
     return ((y, x) not in clays
@@ -66,21 +78,9 @@ def fall(y, x):
         if is_empty(y+1, x): fall(y+1, x)
         if is_solid(y+1, x): horizontal(y, x)
 
-def show():
-    scan = [
-        ['.' for x in range(bounds.min_x-1, bounds.max_x+2)]
-        for y in range(bounds.min_y, bounds.max_y+1)
-    ]
-    for y, x in clays: scan[y-bounds.min_y][x-bounds.min_x+1] = '#'
-    for y, x in flows: scan[y-bounds.min_y][x-bounds.min_x+1] = '|'
-    for y, x in rests: scan[y-bounds.min_y][x-bounds.min_x+1] = '~'
-
-    for row in scan: print(''.join(row))
-    print()
-
 def both_stars():
     fall(bounds.min_y, 500)
-    show()
+    # show()
     return len(flows|rests), len(rests)
 
 TEST = '''x=495, y=2..7
@@ -94,7 +94,7 @@ y=13, x=498..504'''.split('\n')
 
 if __name__ == '__main__':
     clays, bounds = parse(TEST)
-    flows, rests = set(), set()
+    flows, rests = set(), set() # type: ignore
     assert both_stars() == (57, 29)
 
     clays, bounds = parse(open('data/day17.in'))

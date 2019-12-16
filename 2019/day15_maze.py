@@ -1,20 +1,16 @@
 # https://adventofcode.com/2019/day/15
 
-from enum       import Enum
-from intcode    import run
+from enum import Enum
+from intcode import run
 from matplotlib import pyplot as plt
-from typing     import NamedTuple
 import numpy as np
-import pickle
-
-class Status(Enum): WALL, ROOM, OXYGEN = range(3)
 
 class Move(Enum): 
     NORTH, SOUTH, WEST, EAST = range(1, 5)
 
     @staticmethod
     def parse(a, b):
-        ay, ax = a; by, bx = b
+        (ay, ax), (by, bx) = a, b
         if by - ay == -1: return Move.NORTH
         if by - ay ==  1: return Move.SOUTH
         if bx - ax == -1: return Move.WEST
@@ -22,6 +18,13 @@ class Move(Enum):
  
 def neighbors(y, x):
     return [(y-1, x), (y+1, x), (y, x-1), (y, x+1)]
+
+def get_moves(start, p, pos):
+    moves = [ Move.parse(p[pos], pos) ]
+    while p[pos] != start:
+        pos = p[pos]
+        moves.append( Move.parse(p[pos], pos) )
+    return list(reversed(moves))
 
 OFFSET = 22
 class Bot():
@@ -41,49 +44,42 @@ class Bot():
         for y, x in self.rooms:    self.maze[y+OFFSET, x+OFFSET] = 1
         for y, x in self.unknowns: self.maze[y+OFFSET, x+OFFSET] = 2
         for y, x in self.walls:    self.maze[y+OFFSET, x+OFFSET] = 10
-        self.maze[self.pos[0]+OFFSET, self.pos[1]+OFFSET] = 15
+        self.maze[self.oxygen[0]+OFFSET, self.oxygen[1]+OFFSET] = 15
         plt.imshow(self.maze); plt.show()
 
     def bfs(self, start, targets):
         q, p, seen = [start], {}, set()
         for pos in q:
-            if pos in targets:
-                path = [Move.parse(p[pos], pos)]
-                while p[pos] != start:
-                    pos = p[pos]
-                    path.append(Move.parse(p[pos], pos))
-                return list(reversed(path))
-
+            if pos in targets: return get_moves(start, p, pos)
             for next_pos in neighbors(*pos):
                 if (next_pos in seen or next_pos in self.walls): continue
                 seen.add(next_pos)
                 p[next_pos] = pos
                 q.append(next_pos)
 
-    def execute(self, plan):
-        for move in plan:
-            command = move.value
+    def resolve(self, pos, moved):
+        self.unknowns.discard(pos)
+        if not moved: 
+            self.walls.add(pos)
+        else:
+            self.rooms.add(pos)
+            self.pos = pos
+            self.unknowns |= (
+                set(neighbors(*pos)) - self.walls - self.rooms
+            )
+            if moved == 2: self.oxygen = pos
 
+    def execute(self, moves):
+        for move in moves:
+            command = move.value
             pos = neighbors(*self.pos)[command-1]
             self.remote.append(command)
-            status = Status(next(self.game))
-            self.unknowns.discard(pos)
-
-            if status == Status.WALL: 
-                self.walls.add(pos)
-            else:
-                self.rooms.add(pos)
-                self.pos = pos
-                self.unknowns |= (
-                    set(neighbors(*pos))
-                  - self.walls - self.rooms
-                )
-                if status == Status.OXYGEN: self.oxygen = pos
-                
+            self.resolve(pos, next(self.game))
+            
     def explore(self):
         while self.unknowns:
-            plan = self.bfs(self.pos, self.unknowns) 
-            self.execute(plan)
+            moves = self.bfs(self.pos, self.unknowns) 
+            self.execute(moves)
 
 def oxygen_distance(bot):
     return len(bot.bfs([0, 0], [bot.oxygen]))
