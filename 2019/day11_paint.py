@@ -5,7 +5,6 @@ from enum        import Enum
 from intcode     import run
 from matplotlib  import pyplot as plt
 from typing      import NamedTuple
-import numpy as np
 
 DELTA = [(-1, 0), (0, 1), (1, 0), (0, -1)]
 
@@ -37,7 +36,7 @@ def visualize(hull):
 def run_robot(code, start=0): 
     pos = Pos(0, 0, Direction.UP)
     camera, hull = [start], defaultdict(int)
-    computer = run(code, iter(camera))
+    computer = run(code, camera)
     while True:
         try:
             hull[pos.y, pos.x] = next(computer)

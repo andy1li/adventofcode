@@ -19,8 +19,9 @@ def parse_modes(op):
     op = str(op).zfill(5)
     return int(op[-2:]), [*map(int, reversed(op[:-2]))]
 
-def run(code, input, extra=1024): 
+def run(code, input, extra=1024*4): 
     mem = code.copy() + [0] * extra
+    input = iter(input)
     
     ip = rb = 0
     while mem[ip] != 99:

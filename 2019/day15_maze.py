@@ -30,13 +30,13 @@ OFFSET = 22
 class Bot():
     def __init__(self, code):
         self.remote = []
-        self.game = run(code, iter(self.remote))
+        self.game = run(code, self.remote)
 
         self.pos = 0, 0
         self.rooms = set([self.pos])
         self.unknowns = set(neighbors(*self.pos))
         self.walls = set()
-        self.maze = np.zeros([OFFSET*2-1, OFFSET*2-1])
+        self.maze = np.zeros([OFFSET*2-1, OFFSET*2-1], dtype=int)
 
         self.explore()
 

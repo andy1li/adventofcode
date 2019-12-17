@@ -6,8 +6,8 @@ from tqdm import tqdm
 
 def parse(input):
     area = defaultdict(str)
-    for y, row in enumerate(map(str.strip, input.split('\n'))):
-        for x, cell in enumerate(row):
+    for y, row in enumerate(input):
+        for x, cell in enumerate(row.strip()):
             area[y, x] = cell
     return area
 
@@ -64,11 +64,12 @@ TEST = '''.#.#...|#.
 .|....|...
 ||...#|.#|
 |.||||..|.
-...#.|..|.'''
+...#.|..|.'''.split('\n')
 
 if __name__ == '__main__':
     assert fst_star(parse(TEST), 10) == 1147
 
-    day18 = open('data/day18.in').read()
-    print(fst_star(parse(day18)))
-    print(snd_star(parse(day18)))
+    grid = parse(open('data/day18.in'))
+    print(fst_star(grid))
+    print(snd_star(grid))
+

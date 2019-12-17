@@ -1,20 +1,21 @@
 # https://adventofcode.com/2019/day/16
 
-from itertools import chain, cycle, islice, repeat
 import numpy as np
 
 def parse(data):
-    return np.fromiter(map(int, data), dtype=np.int8)
+    return np.fromiter(data, int, len(data))
 
 def get_pattern(n):
-    pattern = np.zeros([n, n], dtype=np.int8)
+    matrix = np.zeros([n, n], dtype=int)
+    wave = [0, 1, 0, -1]
     for i in range(n):
-        row = cycle(chain(
-            repeat(0, i+1), repeat(1, i+1), 
-            repeat(0, i+1), repeat(-1, i+1)
-        ))
-        pattern[i] = np.fromiter(islice(row, n+1), np.int8)[1:]
-    return pattern
+        repeated = np.repeat(wave, i+1)
+        pattern = np.tile(repeated, n//len(repeated)+1)
+        matrix[i] = pattern[1:n+1]
+    return matrix
+
+def get_num(signal, n=8):
+    return ''.join(map(str, signal[:n]))
 
 def fft(signal, num_phases=100): 
     pattern = get_pattern(len(signal))
@@ -23,19 +24,18 @@ def fft(signal, num_phases=100):
     for _ in range(num_phases):
         signal = abs(pattern @ signal) % 10
 
-    return ''.join(map(str, signal[:8]))
+    return get_num(signal)
 
 def trick_fft(signal, num_phases=100):
     signal = np.tile(signal, 10000)
-    offset = int(''.join(map(str, signal[:7])))
-    signal = signal[offset:]
+    skip = int(get_num(signal, 7))
+    signal = signal[skip:]
 
     for _ in range(num_phases):
-        rev = signal[::-1]
-        signal = np.cumsum(rev)[::-1]
-        signal %= 10
+        signal = np.cumsum(signal[::-1]) 
+        signal = signal[::-1] % 10
 
-    return ''.join(map(str, signal[:8]))
+    return get_num(signal)
 
 if __name__ == '__main__':
     assert fft(parse('12345678'), 4) == '01029498'    
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     assert trick_fft(parse('02935109699940807407585447034323')) == '78725270'
     assert trick_fft(parse('03081770884921959731165446850517')) == '53553731'
 
-    signal = [*map(int, open('data/day16.in').read())]
+    signal = parse(open('data/day16.in').read())
     print(fft(signal))
     print(trick_fft(signal))
 

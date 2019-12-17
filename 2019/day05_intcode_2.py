@@ -9,11 +9,11 @@ TEST = [3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,
 if __name__ == '__main__':
     code = [*map(int, open('data/day05.in').read().split(','))]
     
-    assert next(run([3,0,4,0,99], iter([1]))) == 1
+    assert next(run([3,0,4,0,99], [1])) == 1
 
-    assert next(run(TEST, iter([1]))) == 999
-    assert next(run(TEST, iter([8]))) == 1000
-    assert next(run(TEST, iter([88]))) == 1001
+    assert next(run(TEST, [1])) == 999
+    assert next(run(TEST, [8])) == 1000
+    assert next(run(TEST, [88])) == 1001
 
-    print(*run(code, iter([1])))
-    print(*run(code, iter([5])))
+    print(*run(code, [1]))
+    print(*run(code, [5]))

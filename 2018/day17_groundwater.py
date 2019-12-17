@@ -67,8 +67,7 @@ def horizontal(y, x):
             flows.discard((y, x)) 
             rests.add((y, x))
     else:
-        for x in range(lo+1, hi):
-            if (y, x) in rests: continue
+        for x in range(lo+1, hi): 
             flows.add((y, x))
             if is_empty(y+1, x): fall(y, x)
             

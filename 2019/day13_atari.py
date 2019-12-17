@@ -9,20 +9,20 @@ cmp = lambda a, b: (a > b) - (a < b)
 read = lambda g: (next(g), next(g), next(g))
 
 def init_image(game, width=26, height=40):
-    image = np.zeros([width, height])
+    image = np.zeros([width, height], dtype=int)
     for _ in range(width * height):
         x, y, t = read(game)
         image[y, x] = t
     return image
 
 def count_blocks(code): 
-    image = init_image(run(code, None))
+    image = init_image(run(code, []))
     # plt.imshow(image); plt.show()
     return (image == 2).sum()
 
 def play_game(code, animate=False): 
     code[0], joystick = 2, [1]
-    game = run(code, iter(joystick))
+    game = run(code, joystick)
     image = init_image(game)
     screen = plt.imshow(image)
     
