@@ -10,13 +10,10 @@ class Move(Enum):
 
     @staticmethod
     def parse(a, b):
-        (ay, ax), (by, bx) = a, b
-        if by - ay == -1: return Move.NORTH
-        if by - ay ==  1: return Move.SOUTH
-        if bx - ax == -1: return Move.WEST
-        if bx - ax ==  1: return Move.EAST
+        direction = get_neighbors(*a).index(b)
+        return Move(direction+1)
  
-def neighbors(y, x):
+def get_neighbors(y, x):
     return [(y-1, x), (y+1, x), (y, x-1), (y, x+1)]
 
 def get_moves(start, p, pos):
@@ -33,8 +30,8 @@ class Bot():
         self.game = run(code, self.remote)
 
         self.pos = 0, 0
-        self.rooms = set([self.pos])
-        self.unknowns = set(neighbors(*self.pos))
+        self.rooms = {self.pos}
+        self.unknowns = set(get_neighbors(*self.pos))
         self.walls = set()
         self.maze = np.zeros([OFFSET*2-1, OFFSET*2-1], dtype=int)
 
@@ -51,11 +48,11 @@ class Bot():
         q, p, seen = [start], {}, set()
         for pos in q:
             if pos in targets: return get_moves(start, p, pos)
-            for next_pos in neighbors(*pos):
-                if (next_pos in seen or next_pos in self.walls): continue
-                seen.add(next_pos)
-                p[next_pos] = pos
-                q.append(next_pos)
+            for neighbor in get_neighbors(*pos):
+                if (neighbor in seen or neighbor in self.walls): continue
+                seen.add(neighbor)
+                p[neighbor] = pos
+                q.append(neighbor)
 
     def resolve(self, pos, moved):
         self.unknowns.discard(pos)
@@ -65,14 +62,14 @@ class Bot():
             self.rooms.add(pos)
             self.pos = pos
             self.unknowns |= (
-                set(neighbors(*pos)) - self.walls - self.rooms
+                set(get_neighbors(*pos)) - self.walls - self.rooms
             )
             if moved == 2: self.oxygen = pos
 
     def execute(self, moves):
         for move in moves:
             command = move.value
-            pos = neighbors(*self.pos)[command-1]
+            pos = get_neighbors(*self.pos)[command-1]
             self.remote.append(command)
             self.resolve(pos, next(self.game))
             

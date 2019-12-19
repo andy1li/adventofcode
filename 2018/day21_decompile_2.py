@@ -11,8 +11,8 @@ def crack(ip, ops):
         regs = op.code(regs, op)
         regs[ip] += 1
 
-def repeat_hash():
-    seen = bitarray(int(2**24))
+def last_hash():
+    seen = bitarray(2**24)
     hash = last_hash = 0
 
     while True: # r0 != hash
@@ -21,7 +21,7 @@ def repeat_hash():
 
         while three_bytes:
             three_bytes, byte = divmod(three_bytes, 256) # pop byte
-            hash = ((hash + byte) * 65899) % 16777216 # 2 ** 24
+            hash = ((hash + byte) * 65899) % 16777216 # 2**24
             
         # print('hash:', hash)
         if seen[hash]: return last_hash
@@ -29,4 +29,4 @@ def repeat_hash():
 
 if __name__ == '__main__':
     print(crack(*parse(open('data/day21.in'))))
-    print(repeat_hash())
+    print(last_hash())

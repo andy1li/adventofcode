@@ -40,7 +40,7 @@ G)H
 D)I
 E)J
 J)K
-K)L'''.split('\n')
+K)L'''.split()
 TEST2 = '''COM)B
 B)C
 C)D
@@ -53,7 +53,7 @@ E)J
 J)K
 K)L
 K)YOU
-I)SAN'''.split('\n')
+I)SAN'''.split()
 
 if __name__ == '__main__':
     assert fst_star(*parse(TEST1)) == 42
