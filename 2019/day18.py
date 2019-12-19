@@ -1,15 +1,16 @@
 # https://adventofcode.com/2019/day/18
 
 from advent import get_neighbors, iterate
+from collections import defaultdict
 from functools import lru_cache 
 from string import ascii_lowercase as KEYS, ascii_uppercase as DOORS
 
 def parse(input):
-    maze, keys = [*map(str.strip, input)], {}
+    maze, keys, starts = [*map(str.strip, input)], {}, tuple()
     for y, x, val in iterate(maze):
-        if val == '@': start = y, x
+        if val == '@': starts += ((y, x),)
         if val in KEYS: keys[val] = y, x
-    return maze, keys, start
+    return maze, keys, starts
 
 def bfs(maze, start):
     q, distance, seen = [(0, start)], {}, {start}
@@ -37,46 +38,42 @@ def get_dep(maze, start):
     dfs(frozenset(), start)
     return dep
 
-# def shortest_path(maze, keys, start): 
-#     @lru_cache(None)
-#     def recurse(collected, start):
-#         if len(collected) == len(keys): return 0
-#         return min(
-#             distances[start][end] + recurse(collected|{end}, end)
-#             for end in keys
-#             if (end not in collected
-#             and not (dep[end] - collected))
-#         )
-#     # print(*maze, sep='\n')
-#     distances = { key: bfs(maze, pos) 
-#         for key, pos in keys.items()
-#     }
-#     distances[start] = bfs(maze, start)
+def shortest_path(maze, keys, starts): 
+    def find(starts, key):
+        return next( start
+            for start in starts
+            if key in distances[start]
+        )
 
-#     dep = get_dep(maze, start)
-#     return recurse(frozenset(), start)
+    def replace(starts, key):
+        return tuple(
+            key if key in distances[start] else start
+            for start in starts
+        )
 
-def shortest_path(maze, keys, start): 
     @lru_cache(None)
-    def recurse(collected, start):
+    def recurse(collected, starts):
         if len(collected) == len(keys): return 0
         return min(
-            distances[start][end] + recurse(collected|{end}, end)
+            distances[find(starts, end)][end] + recurse(
+                collected | {end}, replace(starts, end)
+            )
             for end in keys
             if (end not in collected
             and not (dep[end] - collected))
         )
+
     # print(*maze, sep='\n')
     distances = { key: bfs(maze, pos) 
         for key, pos in keys.items()
     }
-    distances[start] = bfs(maze, start)
+    dep = defaultdict(set)
+    for start in starts:
+        distances[start] = bfs(maze, start)
+        dep.update(get_dep(maze, start))
 
-    dep = get_dep(maze, start)
-    return recurse(frozenset(), start)
+    return recurse(frozenset(), starts)
 
-def snd_star(data): 
-    pass
 
 TEST1 = '''#########
 #b.A.@.a#
@@ -138,7 +135,6 @@ TEST9 = '''#############
 #o#m..#i#jk.#
 #############'''.split()
 
-
 if __name__ == '__main__':
     assert shortest_path(*parse(TEST1)) == 8
     assert shortest_path(*parse(TEST2)) == 86
@@ -146,5 +142,10 @@ if __name__ == '__main__':
     assert shortest_path(*parse(TEST4)) == 136
     assert shortest_path(*parse(TEST5)) == 81
 
-    # print(shortest_path(*parse(open('data/day18a.in'))))
-    # print(snd_star(data))
+    assert shortest_path(*parse(TEST6)) == 8
+    assert shortest_path(*parse(TEST7)) == 24
+    assert shortest_path(*parse(TEST8)) == 32
+    assert shortest_path(*parse(TEST9)) == 72
+
+    print(shortest_path(*parse(open('data/day18a.in'))))
+    # print(shortest_path(*parse(open('data/day18b.in'))))
