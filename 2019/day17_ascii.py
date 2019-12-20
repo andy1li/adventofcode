@@ -75,7 +75,7 @@ def collect_dust(code, image):
     code[0] = 2
     computer = run(code, generate_input(image))
     output = list(computer); dust = output.pop()
-    # print(bytes(output).decode())
+    print(bytes(output).decode())
     return dust
 
 if __name__ == '__main__':
