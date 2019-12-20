@@ -1,6 +1,6 @@
 # https://adventofcode.com/2019/day/18
 
-from advent import get_neighbors, iterate
+from advent import get_neighbor_items, iterate
 from functools import lru_cache 
 from string import (
     ascii_lowercase as KEYS, 
@@ -31,9 +31,8 @@ def bfs(maze, start):
         if val in KEYS_OR_DOORS: 
             p |= {val.lower()}
 
-        for neighbor in get_neighbors(y, x):
-            ny, nx = neighbor
-            if (neighbor not in seen and maze[ny][nx] != '#'):
+        for neighbor, nval in get_neighbor_items(maze, y, x):
+            if (neighbor not in seen and nval != '#'):
                 seen.add(neighbor)
                 q.append((d+1, neighbor, p))
 

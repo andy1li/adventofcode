@@ -1,6 +1,6 @@
 # https://adventofcode.com/2019/day/17
 
-from advent import get_neighbors, iterate, within_bounds
+from advent import get_neighbors, get_neighbor_items, iterate, within_bounds
 from intcode import run
 
 def get_value(image, pos):
@@ -9,9 +9,8 @@ def get_value(image, pos):
         return image[y][x]
 
 def at_intersection(image, y, x, value):
-    return value == '#' and all(
-        within_bounds(image, ny, nx) and image[ny][nx] == '#'
-        for ny, nx in get_neighbors(y, x)
+    return value == '#' and all( nval == '#'
+        for _, nval in get_neighbor_items(image, y, x)
     )
 
 def generate_input(image, END=(26, 6)):
