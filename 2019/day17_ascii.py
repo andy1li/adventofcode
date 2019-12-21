@@ -57,7 +57,7 @@ R,12,R,4,R,10,R,12
 R,6,L,8,R,10
 L,8,R,4,R,4,R,6
 n
-'''.encode()
+    '''.encode()
 
 def get_image(code):
     computer = run(code, [])
@@ -80,5 +80,5 @@ def collect_dust(code, image):
 if __name__ == '__main__':
     code = [*map(int, open('data/day17.in').read().split(','))]
     image = get_image(code)
-    print(sum_alignment(image))
+    print(sum_alignment(image), '\n')
     print(collect_dust(code, image))

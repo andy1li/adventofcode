@@ -1,31 +1,26 @@
 # https://adventofcode.com/2019/day/20
 
-from advent import get_neighbor_items, iterate, within_bounds
+from advent import get_neighbor_items, iterate
 from collections import defaultdict
 from matplotlib import pyplot as plt
 from string import ascii_uppercase as LETTERS
 import networkx
 
+def get_portal_pos(neighbor_items):
+    return next(filter(
+        lambda item: item[1] == '.', neighbor_items
+    ))[0]
+
 def parse_portal(maze, y, x, val):
     neighbor_items = list(get_neighbor_items(maze, y, x))
+    name2 = next(filter(
+        lambda item: item[1] in LETTERS, neighbor_items
+    ))
     try:
-        pos = next( neighbor
-            for neighbor, nval in neighbor_items
-            if nval == '.'
-        )
-        name2 = next( (neighbor, nval)
-            for neighbor, nval in neighbor_items
-            if nval in LETTERS
-        )
+        pos = get_portal_pos(neighbor_items)
     except StopIteration:
-        name2 = next( (neighbor, nval)
-            for neighbor, nval in neighbor_items
-            if nval in LETTERS
-        )
-        pos = next( nneighbor
-            for nneighbor, nnval in get_neighbor_items(maze, *name2[0])
-            if nnval == '.'
-        )
+        pos = get_portal_pos(get_neighbor_items(maze, *name2[0]))
+
     name1 = (y, x), val
     name = sorted([name1, name2])
     name = name[0][-1] + name[1][-1]
@@ -52,7 +47,7 @@ def partition_portals(maze, portals):
     cy, cx = len(maze)//2, len(maze[0])//2
     for name, portal_set in portals.items():
         i, o = sorted(portal_set, 
-            key=lambda yx: (yx[0]-cy)**2+(yx[1]-cx)**2
+            key=lambda yx: (yx[0]-cy)**2 + (yx[1]-cx)**2
         )
         inners[name] = i
         outers[name] = o
@@ -67,32 +62,18 @@ def parse(maze, depth=1):
         H.add_edges_from([(i, a), (i, b)] for a, b in G.edges)
 
     if depth == 1: links = [(0, 0)]
-    else: links = [*zip(range(depth), range(1, depth))]
-
+    else: links = zip(range(depth), range(1, depth))
     H.add_edges_from(
         [(a, i), (b, outers[n])]
         for a, b in links
         for n, i in inners.items()
     )
 
-    # for d, pos in networkx.shortest_path(H, (0, start), (0, end)):
-    #     for n, ipos in inners.items():
-    #         if pos == ipos: print(d, n, pos)
-    #     for n, opos in outers.items():
-    #         if pos == opos: print(d, n, pos)
     return H, (0, start), (0, end)
 
 def shortest_path(G, start, end): 
     # networkx.draw(G, with_labels=True); plt.show()
     return networkx.shortest_path_length(G, start, end)
-
-def recursive(maze): 
-    i = 2
-    while True:
-        try:
-            return i, shortest_path(*parse(maze, i))
-        except networkx.exception.NetworkXNoPath:
-            i += 1
 
 TEST1 = '''         A           
          A           
@@ -195,4 +176,5 @@ if __name__ == '__main__':
 
     maze = open('data/day20.in').readlines()
     print(shortest_path(*parse(maze)))
-    print(recursive(maze))
+    MAGIC = 26
+    print(shortest_path(*parse(maze, MAGIC)))
