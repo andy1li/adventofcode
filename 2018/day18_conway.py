@@ -2,7 +2,6 @@
 
 from collections import Counter, defaultdict
 from itertools import count, product
-from tqdm import tqdm
 
 def parse(input):
     area = defaultdict(str)
@@ -43,14 +42,14 @@ def fst_star(area, size=50):
     return cnt['|'] * cnt['#']
 
 def snd_star(area, end=1000000000):
-    areas, resources, t = {}, [], tqdm()
+    areas, resources = {}, []
     for i in count():
-        cnt = Counter(area.values()); t.update()
+        cnt = Counter(area.values())
         resources.append(cnt['|'] * cnt['#'])
 
         area = step(area); a = show(area)
         if a in areas:
-            zero = areas[a]; mod = i-zero; t.close()
+            zero = areas[a]; mod = i-zero
             n = zero + (1000000000-zero)%mod
             return resources[n]
         areas[a] = i
