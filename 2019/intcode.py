@@ -4,15 +4,16 @@ from collections import deque
 from operator  import add, mul, truth, not_, lt, eq
 
 INSTRUCTION = {
-    1: (add,   4), 
-    2: (mul,   4), 
-    3: (None,  2), # save input
-    4: (None,  2), # send output
-    5: (truth, 0), # jump-if-true
-    6: (not_,  0), # jump-if-false
-    7: (lt,    4),
-    8: (eq,    4), 
-    9: (None,  2)  # adjust the relative base
+ # opcode: (func,  length)
+        1: (add,   4), 
+        2: (mul,   4), 
+        3: (None,  2), # save input
+        4: (None,  2), # send output
+        5: (truth, 0), # jump-if-true
+        6: (not_,  0), # jump-if-false
+        7: (lt,    4),
+        8: (eq,    4), 
+        9: (None,  2)  # adjust the relative base
 }
 
 def parse_modes(op):

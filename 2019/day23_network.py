@@ -3,7 +3,7 @@
 from collections import deque
 from intcode import run
 
-class Port:
+class NIC:
     def __init__(self, address):
         self.queue = deque([address])
         self.empty_calls = 0
@@ -22,7 +22,7 @@ class Port:
     def is_idle(self):
         return not self.queue and self.empty_calls > 1
     
-def boot_up(code): 
+def run_network(code): 
     def router(packet):
         global NAT
         dest, x, y = packet
@@ -31,17 +31,17 @@ def boot_up(code):
             NAT = x, y
             if not previous_NAT: print('NAT receives:', y)
         else: 
-            ports[dest].queue.extend([x, y])
+            network[dest].queue.extend([x, y])
     
     previous_NAT = None
-    ports = [*map(Port, range(50))]
-    computers = [run(code, ports[i], router) for i in range(50)]
+    network = [*map(NIC, range(50))]
+    computers = [run(code, network[i], router) for i in range(50)]
     while True: 
         for i in range(50): 
-            if not ports[i].is_idle: next(computers[i])
+            if not network[i].is_idle: next(computers[i])
 
-        if all(ports[i].is_idle for i in range(50)):
-            ports[0].queue.extend(NAT)
+        if all(network[i].is_idle for i in range(50)):
+            network[0].queue.extend(NAT)
             if NAT == previous_NAT: 
                 print('NAT sends:', NAT[1]); break
             previous_NAT = NAT
@@ -51,4 +51,4 @@ def snd_star(data):
 
 if __name__ == '__main__':
     code = [*map(int, open('data/day23.in').read().split(','))]
-    boot_up(code)
+    run_network(code)
