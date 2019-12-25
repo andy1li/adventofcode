@@ -41,10 +41,10 @@ def slam_shuffle(techs, size, n, i):
 
 TEST1 = '''deal with increment 7
 deal into new stack
-deal into new stack'''.split('\n')
+deal into new stack'''.splitlines()
 TEST2 = '''cut 6
 deal with increment 7
-deal into new stack'''.split('\n')
+deal into new stack'''.splitlines()
 TEST3 = '''deal with increment 7
 deal with increment 9
 cut -2'''.split('\n')

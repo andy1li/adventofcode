@@ -44,21 +44,21 @@ def step(levels, get_neighbors):
             (ny, nx) in levels[l+dl]
             for dl, ny, nx in neighbors
         )
-        if has_bug and cnt[True] == 1: 
-            new_levels[l].add((y, x))
-        elif not has_bug and cnt[True] in [1, 2]:
+        if ((has_bug and cnt[True] == 1) 
+        or  (not has_bug and cnt[True] in [1, 2])): 
             new_levels[l].add((y, x))
 
     def dfs(l, y, x):
         if (l, y, x) in seen: return
         seen.add((l, y, x))
 
-        neighbors = list(get_neighbors(y, x))
+        neighbors = tuple(get_neighbors(y, x))
         has_bug = (y, x) in levels[l]
         apply_rule(l, y, x, neighbors, has_bug)
 
         if has_bug: 
-            for dl, ny, nx in neighbors: dfs(l+dl, ny, nx)
+            for dl, ny, nx in neighbors: 
+                dfs(l+dl, ny, nx)
 
     for l, level in levels.copy().items():
         for y, x in level:

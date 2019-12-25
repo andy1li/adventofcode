@@ -52,12 +52,12 @@ def generate_input(image, END=(26, 6)):
     # B: R6 L8 R10 
     # C: L8 R4 R4 R6
 
-    return '''A,B,A,C,A,B,C,A,B,C
+    return b'''A,B,A,C,A,B,C,A,B,C
 R,12,R,4,R,10,R,12
 R,6,L,8,R,10
 L,8,R,4,R,4,R,6
 n
-    '''.encode()
+    '''
 
 def get_image(code):
     computer = run(code, [])

@@ -62,11 +62,11 @@ def snd_star(moons):
 TEST1 = '''<x=-1, y=0, z=2>
 <x=2, y=-10, z=-7>
 <x=4, y=-8, z=8>
-<x=3, y=5, z=-1>'''.split('\n')
+<x=3, y=5, z=-1>'''.splitlines()
 TEST2 = '''<x=-8, y=-10, z=0>
 <x=5, y=5, z=10>
 <x=2, y=-7, z=3>
-<x=9, y=-8, z=-3>'''.split('\n')
+<x=9, y=-8, z=-3>'''.splitlines()
 
 if __name__ == '__main__':
     assert fst_star(parse(TEST1), 10) == 179

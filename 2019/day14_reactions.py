@@ -46,14 +46,14 @@ TEST1 = '''10 ORE => 10 A
 7 A, 1 B => 1 C
 7 A, 1 C => 1 D
 7 A, 1 D => 1 E
-7 A, 1 E => 1 FUEL'''.split('\n')
+7 A, 1 E => 1 FUEL'''.splitlines()
 TEST2 = '''9 ORE => 2 A
 8 ORE => 3 B
 7 ORE => 5 C
 3 A, 4 B => 1 AB
 5 B, 7 C => 1 BC
 4 C, 1 A => 1 CA
-2 AB, 3 BC, 4 CA => 1 FUEL'''.split('\n')
+2 AB, 3 BC, 4 CA => 1 FUEL'''.splitlines()
 TEST13312 = '''157 ORE => 5 NZVS
 165 ORE => 6 DCFZ
 44 XJWVT, 5 KHKGT, 1 QDVJ, 29 NZVS, 9 GPVTF, 48 HKGWZ => 1 FUEL
@@ -62,7 +62,7 @@ TEST13312 = '''157 ORE => 5 NZVS
 177 ORE => 5 HKGWZ
 7 DCFZ, 7 PSHF => 2 XJWVT
 165 ORE => 2 GPVTF
-3 DCFZ, 7 NZVS, 5 HKGWZ, 10 PSHF => 8 KHKGT'''.split('\n')
+3 DCFZ, 7 NZVS, 5 HKGWZ, 10 PSHF => 8 KHKGT'''.splitlines()
 TEST180697 = '''2 VPVL, 7 FWMGM, 2 CXFTF, 11 MNCFX => 1 STKFG
 17 NVRVD, 3 JNWZP => 8 VPVL
 53 STKFG, 6 MNCFX, 46 VJHF, 81 HVMC, 68 CXFTF, 25 GNMV => 1 FUEL
@@ -74,7 +74,7 @@ TEST180697 = '''2 VPVL, 7 FWMGM, 2 CXFTF, 11 MNCFX => 1 STKFG
 145 ORE => 6 MNCFX
 1 NVRVD => 8 CXFTF
 1 VJHF, 6 MNCFX => 4 RFSQX
-176 ORE => 6 VJHF'''.split('\n')
+176 ORE => 6 VJHF'''.splitlines()
 TEST2210736 = '''171 ORE => 8 CNZTR
 7 ZLQW, 3 BMBT, 9 XCVML, 26 XMNCP, 1 WPTQ, 2 MZWV, 1 RJRHP => 4 PLWSL
 114 ORE => 4 BHXH
@@ -91,7 +91,7 @@ TEST2210736 = '''171 ORE => 8 CNZTR
 3 BHXH, 2 VRPVC => 7 MZWV
 121 ORE => 7 VRPVC
 7 XCVML => 6 RJRHP
-5 BHXH, 4 VRPVC => 5 LTCX'''.split('\n')
+5 BHXH, 4 VRPVC => 5 LTCX'''.splitlines()
 
 if __name__ == '__main__':
     assert num_ore(parse(TEST1)) == 31
