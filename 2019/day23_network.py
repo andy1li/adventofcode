@@ -46,9 +46,6 @@ def run_network(code):
                 print('NAT sends:', NAT[1]); break
             previous_NAT = NAT
 
-def snd_star(data): 
-    pass
-
 if __name__ == '__main__':
     code = [*map(int, open('data/day23.in').read().split(','))]
     run_network(code)

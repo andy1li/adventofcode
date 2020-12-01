@@ -16,7 +16,7 @@ def last_hash():
     hash = last_hash = 0
 
     while True: # r0 != hash
-        three_bytes = hash | 65536 # set bit 17
+        three_bytes = hash | 65536 # set bit 16
         hash = 2024736
 
         while three_bytes:

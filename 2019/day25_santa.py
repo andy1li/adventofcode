@@ -22,8 +22,8 @@ class Agent:
     def is_running(self):
         return self.tasks or self.command_queque
 
-    def next_command(self, prompt, new_task=None):
-        if new_task == 'hack': 
+    def next_command(self, prompt, command=None):
+        if command == 'hack': 
             self.tasks.extend(['check', 'adjust_inventory', 'check_inventory'])
         if not self.command_queque: self.perform_tasks(prompt)
         return self.command_queque.popleft()
@@ -40,9 +40,8 @@ class Agent:
                 combinations(all_items, i)
                 for i in range(len(self.inventory)+1)
             )
-            self.tasks.pop()
-            print(self.inventory, '\n')
-            if self.tasks: self.perform_tasks()
+            self.tasks.pop() 
+            self.perform_tasks()
         else:
             self.command_queque.append('inv')
 
@@ -65,9 +64,10 @@ class Agent:
         if 'Alert!' in prompt:
             self.tasks.append('adjust_inventory')
             self.perform_tasks(prompt)
+        else:
+            self.task.pop()
 
-    def perform_tasks(self, prompt=''):
-        if not self.tasks: return
+    def perform_tasks(self, prompt=''): 
         task = self.tasks[-1]
         getattr(self, task)(prompt)
         

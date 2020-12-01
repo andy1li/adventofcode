@@ -39,11 +39,8 @@ def parse(input):
             cons.union(b, b)
     return cons
 
-def fst_star(constellations): 
+def solve(constellations): 
     return len(constellations.all_sets())
-
-def snd_star(x):
-    pass
 
 TEST1 = ''' 0,0,0,0
  3,0,0,0
@@ -52,7 +49,7 @@ TEST1 = ''' 0,0,0,0
  0,0,0,3
  0,0,0,6
  9,0,0,0
-12,0,0,0'''.split('\n')
+12,0,0,0'''.splitlines()
 
 TEST2 = '''-1,2,2,0
 0,0,2,-2
@@ -63,7 +60,7 @@ TEST2 = '''-1,2,2,0
 -1,3,2,2
 -1,0,-1,0
 0,2,1,-2
-3,0,0,0'''.split('\n')
+3,0,0,0'''.splitlines()
 
 TEST3 = '''1,-1,0,1
 2,0,-1,0
@@ -74,11 +71,11 @@ TEST3 = '''1,-1,0,1
 -2,2,0,0
 2,-2,0,-1
 1,-1,0,-1
-3,2,0,2'''.split('\n')
+3,2,0,2'''.splitlines()
 
 if __name__ == '__main__':
-    assert fst_star(parse(TEST1)) == 2
-    assert fst_star(parse(TEST2)) == 4
-    assert fst_star(parse(TEST3)) == 3
-    print(fst_star(parse(open('data/day25.in'))))
+    assert solve(parse(TEST1)) == 2
+    assert solve(parse(TEST2)) == 4
+    assert solve(parse(TEST3)) == 3
+    print(solve(parse(open('data/day25.in'))))
    

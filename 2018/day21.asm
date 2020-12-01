@@ -9,7 +9,7 @@
 5  seti 0        _ 4  'r4 = 0'
 
 'while r0 != r4:'
-6  bori 4    65536 1  r1 = r4 | 65536 'r1 set bit 17'
+6  bori 4    65536 1  r1 = r4 | 65536 'r1 set bit 16'
 7  seti 2024736  _ 4                  'r4 = 2024736'
 
 'while r1 >= 256:' #  r1, x = divmod(r1, 256)

@@ -1,17 +1,17 @@
-# https://adventofcode.com/2018/day/19
+# https://adventofcode.com/2018/day/22
 
 import numpy as np
 from typing import NamedTuple
 
 class Pos(NamedTuple): x: int; y: int
 
-def scan_cave(depth, target, extra=0, MOD=20183):
-    cave = np.zeros((target.y+1+extra, target.x+1+extra), dtype=int)
-    cave[0,:] = (np.arange(target.x+1+extra) * 16807 + depth) % MOD
-    cave[:,0] = (np.arange(target.y+1+extra) * 48271 + depth) % MOD
+def scan_cave(depth, target, MOD=20183):
+    cave = np.zeros((target.y+1, target.x+1), dtype=int)
+    cave[0,...] = (np.arange(target.x+1) * 16807 + depth) % MOD
+    cave[...,0] = (np.arange(target.y+1) * 48271 + depth) % MOD
 
-    for y in range(1, target.y+1+extra):
-        for x in range(1, target.x+1+extra):
+    for y in range(1, target.y+1):
+        for x in range(1, target.x+1):
             cave[y, x] = ((cave[y, x-1] * cave[y-1, x]) + depth) % MOD
 
     cave[target.y, target.x] = depth

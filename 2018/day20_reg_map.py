@@ -1,6 +1,6 @@
 # https://adventofcode.com/2018/day/20
 
-from collections import defaultdict, deque
+from collections import defaultdict 
 from typing import NamedTuple
 
 class Pos(NamedTuple): 
@@ -28,11 +28,9 @@ def parse(regex):
     return MAP
 
 def both_stars(MAP):
-    q, seen = deque([(0, Pos(0, 0))]), set()
+    q, seen = [(0, Pos(0, 0))], set()
     fst, snd = 0, 0
-    while q:
-        depth, pos = q.popleft()
-        
+    for depth, pos in q:
         fst = max(fst, depth)
         if depth >= 1000: snd += 1
 
