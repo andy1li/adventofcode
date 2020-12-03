@@ -1,12 +1,12 @@
 # https://adventofcode.com/2020/day/_
 
-def fst_star(masses): 
-    return sum(m//3-2 for m in masses)
+def fst_star(data): 
+    pass 
 
-def snd_star(masses):
-    return sum(map(rec, masses))
+def snd_star(data):
+    pass
 
 if __name__ == '__main__':
-    masses = [*map(int, open('data/day0_.in'))]
-    print(fst_star(masses))
-    print(snd_star(masses))
+    data = [*map(int, open('data/day0_.in'))]
+    print(fst_star(data))
+    # print(snd_star(data))
