@@ -35,6 +35,6 @@ TEST = '''\
 if __name__ == '__main__':
     assert count_tree(TEST) == 7
     assert check_angles(TEST) == 336
-    grid = [line.strip() for line in open('data/day03.in')]
+    grid = [*map(str.strip, open('data/day03.in'))]
     print(count_tree(grid))
     print(check_angles(grid))
