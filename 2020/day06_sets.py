@@ -1,14 +1,11 @@
 # https://adventofcode.com/2020/day/6
 
-from functools import reduce
-
-def parse(groups):
-    return [*map(str.split, groups.split('\n\n'))]
+def parse(raw):
+    parse_group = lambda g: [*map(set, g.split())]
+    return [*map(parse_group, raw.split('\n\n'))]
 
 def count(groups, fn):
-    reducer = lambda g: reduce(fn, map(set, g))
-    sets = map(reducer, groups)
-    return sum(map(len, sets))
+    return sum( len(fn(*g)) for g in groups )
 
 TEST = '''\
 abc
