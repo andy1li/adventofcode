@@ -6,7 +6,7 @@ import re
 def parse(rules):
     G = defaultdict(set)
     for rule in rules:
-        colors = re.findall('(\d )?([a-z]+ [a-z]+) bag', rule)
+        colors = re.findall(r'(\d )?([a-z]+ [a-z]+) bag', rule)
         G[colors[0][1]] |= set(colors[1:])
     G['no other'] # put 'no other' in G
     return G

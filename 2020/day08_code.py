@@ -1,5 +1,7 @@
 # https://adventofcode.com/2020/day/8
 
+from copy import deepcopy
+
 def parse(raw):
     def parse_line(line):
         op, arg = line.split(' ')
@@ -14,7 +16,8 @@ def run(code):
         if op == 'acc': acc += arg
         if op == 'jmp': ip += (arg-1)
         ip += 1
-        if ip >= len(code): yield (-1, acc); return
+        if ip >= len(code): 
+            yield (-1, acc); return
 
 def is_loop(code):
     seen = set()
@@ -24,17 +27,13 @@ def is_loop(code):
         seen.add(ip)
 
 def fix(code):
-    def toggle(i):
-        op = code[i][0]
-        if   op == 'nop': code[i][0] = 'jmp'
-        elif op == 'jmp': code[i][0] = 'nop'
-
-    def attempt(i): 
-        toggle(i); loop, acc = is_loop(code)
-        toggle(i); return loop, acc
-
-    attempts = map(attempt, range(len(code)))
-    return next( acc for loop, acc in attempts if not loop )
+    for i in range(len(code)):
+        copy = deepcopy(code)
+        op = copy[i][0]
+        if   op == 'nop': copy[i][0] = 'jmp'
+        elif op == 'jmp': copy[i][0] = 'nop'
+        loop, acc = is_loop(copy)
+        if not loop: return acc
 
 TEST = '''\
 nop +0
