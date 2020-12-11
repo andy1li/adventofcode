@@ -1,12 +1,11 @@
-def eight_neighbors():
-    return [
-        (-1, -1), (-1, 0), (-1, 1),
-        ( 0, -1),          ( 0, 1),
-        ( 1, -1), (+1, 0), ( 1, 1)
-    ]
+eight_neighbors = [
+    (-1, -1), (-1, 0), (-1, 1),
+    ( 0, -1),          ( 0, 1),
+    ( 1, -1), (+1, 0), ( 1, 1)
+]
 
 def get_neighbor_items(grid, y, x):
-    for dy, dx in eight_neighbors():
+    for dy, dx in eight_neighbors:
         ny, nx = y+dy, x+dx
         if within_bounds(grid, ny, nx):
             yield (ny, nx), grid[ny][nx]
