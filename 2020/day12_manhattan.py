@@ -1,7 +1,6 @@
 # https://adventofcode.com/2020/day/12
 
 import numpy as np
-import re
 
 DIR = 'ESWN'
 DELTA = {
@@ -9,31 +8,30 @@ DELTA = {
     'N':  np.array([0,  1]), 'S':  np.array([0, -1])
 }
 
-def parse(line):
-    action, value = re.match(r'([A-Z])(\d+)', line).groups()
-    return action, int(value)
+def parse(line): return line[0], int(line[1:])
 
 def fst_star(instructions): 
-    pos, direction = np.array([0, 0]), 0
+    pos, d = np.zeros(2, int), 0
     for action, value in instructions:
-        if action == 'L': direction = (direction - value//90) % 4
-        if action == 'R': direction = (direction + value//90) % 4
-        if action == 'F': pos += DELTA[DIR[direction]] * value
+        if action in 'LR': 
+            cw = [-1, 1][action == 'R']
+            d = (d + value//90 * cw) % 4
+        if action == 'F': pos += DELTA[DIR[d]] * value
         if action in DIR: pos += DELTA[action] * value
     return sum(map(abs, pos))
 
 def snd_star(instructions):
-    def rotate(wp, action, value):
-        n = (value//90 * [-1, 1][action == 'L'] + 4) % 4
-        for _ in range(n):
-            wp = np.array([-wp[1], wp[0]])
-        return wp
+    def rotate(v, action, value):
+        cw = [-1, 1][action == 'R']
+        n = (value//90 * cw) % 4
+        for _ in range(n): v = v[1], -v[0]
+        return np.array(v)
 
-    ship, wp = np.array([0, 0]), np.array([10, 1])
+    ship, v = np.zeros(2, int), np.array([10, 1])
     for action, value in instructions:
-        if action in 'LR': wp = rotate(wp, action, value)
-        if action == 'F': ship += wp * value
-        if action in DIR: wp += DELTA[action] * value    
+        if action in 'LR': v = rotate(v, action, value)
+        if action == 'F': ship += v * value
+        if action in DIR: v += DELTA[action] * value
     return sum(map(abs, ship))
 
 TEST = '''\
