@@ -1,7 +1,6 @@
 # https://adventofcode.com/2020/day/13
 
 from itertools import count
-import math
 
 def parse(raw):
     buses = map(int, raw.replace('x', '0').split(','))
@@ -16,6 +15,9 @@ def earliest_bus(start, buses):
     )
 
 def chinese_remainder(mods_rems):
+    # from sympy.ntheory.modular import crt
+    # return crt(*zip(*mods_rems))[0]
+
     def rem_indicator(mod_rem):
         mod, rem = mod_rem
         other_mods = prod // mod
@@ -23,6 +25,7 @@ def chinese_remainder(mods_rems):
         indicator = other_mods * om_inv # act as bool(current mod)
         return rem * indicator
 
+    import math
     prod = math.prod(m for m, _ in mods_rems)
     return sum(map(rem_indicator, mods_rems)) % prod
 
