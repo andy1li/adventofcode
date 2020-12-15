@@ -16,10 +16,10 @@ def parse(line):
         return 'mem', (addr, val)
 
 def masked_val(mask, val):
-    val = to_bin(val)
-    for i, bit in enumerate(mask):
-        if bit != 'X': val[i] = bit
-    return to_int(val)
+    return to_int(
+        v if m == 'X' else m
+        for i, (m, v) in enumerate(zip(mask, to_bin(val)))
+    )
 
 def masked_addrs(mask, addr):
     def extend(a):
@@ -42,8 +42,8 @@ def run(get_addrs, get_val, code):
     return sum(mem.values())
 
 def fst_star(code):
-    id_addrs = lambda _, x: [x]
-    return run(id_addrs, masked_val, code)
+    id_addr = lambda _, x: [x]
+    return run(id_addr, masked_val, code)
 
 def snd_star(code):
     id_val = lambda _, x: x
