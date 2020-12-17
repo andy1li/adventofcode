@@ -3,8 +3,8 @@
 from collections import Counter
 from itertools import product
 
-def parse(raw, dim):
-    pad = (0,) * (dim-2)
+def parse(raw, dimension):
+    pad = (0,) * (dimension-2)
     return { (x, y) + pad
         for y, row in enumerate(raw)
         for x, val in enumerate(row)

@@ -4,8 +4,8 @@ import numpy as np
 
 DIR = 'ESWN'
 DELTA = {
-    'E':  np.array([ 1, 0]), 'W':  np.array([-1, 0]),
-    'N':  np.array([0,  1]), 'S':  np.array([0, -1])
+    'E':  np.array([1, 0]), 'W':  np.array([-1, 0]),
+    'N':  np.array([0, 1]), 'S':  np.array([0, -1])
 }
 
 def parse(line): return line[0], int(line[1:])
