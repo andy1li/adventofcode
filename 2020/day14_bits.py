@@ -11,8 +11,7 @@ def parse(line):
     if line.startswith('mask'): 
         return 'mask', line.split()[-1]
     if line.startswith('mem'): 
-        PATTERN = r'mem\[(\d+)\] = (\d+)'
-        addr, val = map(int, re.match(PATTERN, line).groups())
+        addr, val = map(int, re.findall(r'\d+', line))
         return 'mem', (addr, val)
 
 def masked_val(mask, val):

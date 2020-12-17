@@ -1,7 +1,6 @@
 # https://adventofcode.com/2020/day/3
 
-from functools import reduce
-from operator  import mul
+from math import prod
 
 def slide(n, m, right, down):
     r = c = 0
@@ -16,8 +15,7 @@ def count_tree(grid, right=3, down=1):
 
 def check_angles(grid):
     angles = [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]
-    cnts = (count_tree(grid, right, down) for right, down in angles)
-    return reduce(mul, cnts)
+    return prod( count_tree(grid, right, down) for right, down in angles )
 
 TEST = '''\
 ..##.......
@@ -35,6 +33,6 @@ TEST = '''\
 if __name__ == '__main__':
     assert count_tree(TEST) == 7
     assert check_angles(TEST) == 336
-    grid = [*map(str.strip, open('data/day03.in'))]
+    grid = open('data/day03.in').readlines()
     print(count_tree(grid))
     print(check_angles(grid))
