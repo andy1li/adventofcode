@@ -11,9 +11,11 @@ def get_neighbor_items(grid, y, x):
             yield (ny, nx), grid[ny][nx]
 
 def iterate(grid):
-    for y, row in enumerate(grid):
-        for x, value in enumerate(row):
-             yield y, x, value
+    yield from (
+        (y, x, val)
+        for y, row in enumerate(grid)    
+        for x, val in enumerate(row)
+    )
 
 def within_bounds(grid, y, x):
     height, width = len(grid), len(grid[0])

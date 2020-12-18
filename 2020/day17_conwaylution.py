@@ -10,7 +10,7 @@ def boot(raw, ndim):
     neighbors = np.ones(tuple([3] * ndim))
     neighbors[tuple([1] * ndim)] = 0
 
-    for _ in range(6):  
+    for _ in range(6):
         grid = np.pad(grid, 1).astype(int)
         cnt = convolve(grid, neighbors, mode="constant")
         grid = (cnt == 3) | (grid & (cnt == 2))

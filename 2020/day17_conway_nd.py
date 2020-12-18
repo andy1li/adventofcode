@@ -3,29 +3,29 @@
 from collections import Counter
 from itertools import product
 
-def parse(raw, dimension):
-    pad = (0,) * (dimension-2)
-    return { (x, y) + pad
+def parse(raw, ndim):
+    padding = (0,) * (ndim - 2)
+    return { (x, y) + padding
         for y, row in enumerate(raw)
         for x, val in enumerate(row)
         if val == '#'
     }
 
-def step(grid):
+def step(actives):
     neighbors = (
         tuple(map(sum, zip(point, delta)))
-        for point in grid
+        for point in actives
         for delta in product([-1, 0, 1], repeat=len(point))
         if any(delta)
     )
     return { point
         for point, cnt in Counter(neighbors).items()
-        if cnt == 3 or (point in grid and cnt == 2) 
+        if cnt == 3 or (point in actives and cnt == 2) 
     }
 
-def boot(grid): 
-    for i in range(6): grid = step(grid)
-    return len(grid) 
+def boot(actives): 
+    for i in range(6): actives = step(actives)
+    return len(actives) 
 
 TEST = '''\
 .#.
