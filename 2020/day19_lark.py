@@ -1,26 +1,20 @@
 # https://adventofcode.com/2020/day/19
+# Originally from @TheLocehiliosan https://www.reddit.com/r/adventofcode/comments/kg1mro/2020_day_19_solutions/ggc1ozx
 
-import regex
+from lark import Lark, LarkError
 
-def parse(raw, add_loops=False):
-    G = dict(line.split(': ') for line in raw.splitlines())
-
-    def dfs(n):
-        node = G[n]
-        if node[0] == '"': return node[1]
-        if add_loops and n == '8': 
-            return dfs("42") + '+'
-        if add_loops and n == '11':
-            return f'(?P<self>{dfs("42")}(?&self)?{dfs("31")})'
+def count_matches(rules, messages, add_loops=False):
+    if add_loops: rules = ( rules
+        .replace('8: 42', '8: 42 | 42 8')
+        .replace('11: 42 31', '11: 42 31 | 42 11 31')
+    )
+    to_letters = str.maketrans('0123456789', 'abcdefghij')
+    l = Lark(rules.translate(to_letters), start='a')
         
-        branch = lambda branch: ''.join(dfs(x) for x in branch.split())
-        branches = map(branch, node.split('|'))
-        return '(' + '|'.join(branches) + ')'
-
-    return '^' + dfs('0') + '$'
-
-def count_matches(rule, messeages): 
-    return sum(bool(regex.match(rule, m)) for m in messeages.splitlines()) 
+    def parse(message):
+        try: return bool(l.parse(message))
+        except LarkError: return False
+    return sum(map(parse, messages.splitlines()))
 
 TEST_RULES1 = '''\
 0: 4 1 5
@@ -88,8 +82,8 @@ babaaabbbaaabaababbaabababaaab
 aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba'''
 
 if __name__ == '__main__':
-    assert count_matches(parse(TEST_RULES1), TEST_MESSAGES1) == 2
-    assert count_matches(parse(TEST_RULES2, add_loops=True), TEST_MESSAGES2) == 12
+    assert count_matches(TEST_RULES1, TEST_MESSAGES1) == 2
+    assert count_matches(TEST_RULES2, TEST_MESSAGES2, add_loops=True) == 12
     rules, messeages = open('data/day19.in').read().split('\n\n')
-    print(count_matches(parse(rules), messeages))
-    print(count_matches(parse(rules, add_loops=True), messeages))
+    print(count_matches(rules, messeages))
+    print(count_matches(rules, messeages, add_loops=True))
