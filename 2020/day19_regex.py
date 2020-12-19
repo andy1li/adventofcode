@@ -1,32 +1,26 @@
 # https://adventofcode.com/2020/day/19
 
-from collections import defaultdict
 import regex
 
 def parse(raw, add_loops=False):
-    G = defaultdict(list)
-    for line in raw:
-        n, sub_rules = line.split(': ')
-        for sr in sub_rules.split(' | '):
-            if sr[0] == '"': G[n] = sr[1]
-            else: G[n].append(sr.split())
+    G = dict(line.split(': ') for line in raw.splitlines())
 
-    def dfs(n='0'):
+    def dfs(n):
         node = G[n]
-        if type(node) == str: return node
-        if type(node) == list:
-            if add_loops and n == '8':
-                return '(?P<eight>{0}|{0}(?&eight))'.format(dfs("42"))
-            if add_loops and n == '11':
-                return '(?P<eleven>{0}{1}|{0}(?&eleven){1})'.format(dfs("42"), dfs("31"))
-            else:
-                branches = ( ''.join(dfs(x) for x in branch) for branch in node )
-                return '(' + '|'.join(branches) + ')'
+        if node[0] == '"': return node[1]
+        elif add_loops and n == '8':
+            return dfs("42") + '+'
+        elif add_loops and n == '11':
+            return f'(?P<self>{dfs("42")}(?&self)?{dfs("31")})'
+        else:
+            branch = lambda branch: ''.join(dfs(x) for x in branch.split())
+            branches = map(branch, node.split('|'))
+            return '(' + '|'.join(branches) + ')'
 
-    return '^' + dfs() + '$'
+    return '^' + dfs('0') + '$'
 
 def count_matches(rule, messeages): 
-    return sum(bool(regex.match(rule, m)) for m in messeages) 
+    return sum(bool(regex.match(rule, m)) for m in messeages.splitlines()) 
 
 TEST_RULES1 = '''\
 0: 4 1 5
@@ -34,14 +28,14 @@ TEST_RULES1 = '''\
 2: 4 4 | 5 5
 3: 4 5 | 5 4
 4: "a"
-5: "b"'''.splitlines()
+5: "b"'''
 
 TEST_MESSAGES1 = '''
 ababbb
 bababa
 abbbab
 aaabbb
-aaaabbb'''.splitlines()
+aaaabbb'''
 
 TEST_RULES2 = '''\
 42: 9 14 | 10 1
@@ -74,7 +68,7 @@ TEST_RULES2 = '''\
 26: 14 22 | 1 20
 18: 15 15
 7: 14 5 | 1 21
-24: 14 1'''.splitlines()
+24: 14 1'''
 
 TEST_MESSAGES2 = '''
 abbbbbabbbaaaababbaabbbbabababbbabbbbbbabaaaa
@@ -91,13 +85,12 @@ aaaaabbaabaaaaababaa
 aaaabbaaaabbaaa
 aaaabbaabbaaaaaaabbbabbbaaabbaabaaa
 babaaabbbaaabaababbaabababaaab
-aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba'''.splitlines()
+aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba'''
 
 if __name__ == '__main__':
     assert count_matches(parse(TEST_RULES1), TEST_MESSAGES1) == 2
     assert count_matches(parse(TEST_RULES2, add_loops=True), TEST_MESSAGES2) == 12
-    rules = open('data/day19_rules.in').readlines()
-    messeages = open('data/day19_messages.in').readlines()
+    rules, messeages = open('data/day19.in').read().split('\n\n')
     print(count_matches(parse(rules), messeages))
     print(count_matches(parse(rules, add_loops=True), messeages))
 
