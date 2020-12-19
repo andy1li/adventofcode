@@ -11,9 +11,9 @@ def evaluate(expr, add_first=False):
     expr = expr.replace("*", "-")
     if add_first: expr = expr.replace("+", "*")
 
-    root = ast.parse(expr, mode='eval')
-    root = Xformer().visit(root)
-    return eval(compile(root, '', mode='eval'))
+    tree = ast.parse(expr, mode='eval')
+    tree = Xformer().visit(tree)
+    return eval(compile(tree, '', mode='eval'))
 
 TEST = '''\
 1 + 2 * 3 + 4 * 5 + 6
