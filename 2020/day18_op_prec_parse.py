@@ -4,12 +4,12 @@ from math import prod
 from operator import add, mul
 
 def parse(raw):
-    def parse(raw, i=0):
+    def parse_line(line, i=0):
         tree = []
-        while i < len(raw):
-            x = raw[i]
+        while i < len(line):
+            x = line[i]
             if x == '(': 
-                sub_tree, i = parse(raw, i+1)
+                sub_tree, i = parse_line(line, i+1)
                 tree.append(['expr', sub_tree])
             elif x.isdigit():
                 tree.append(['int', int(x)])
@@ -20,7 +20,7 @@ def parse(raw):
             i += 1
         return tree
 
-    return [*map(parse, raw)]
+    return [*map(parse_line, raw)]
 
 def same_precedence(tree):
     acc, op = 0, add

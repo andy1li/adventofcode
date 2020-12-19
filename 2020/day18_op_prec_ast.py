@@ -1,18 +1,19 @@
 # https://adventofcode.com/2020/day/18
-# originally from @ sciyoshi https://www.reddit.com/r/adventofcode/comments/kfeldk/2020_day_18_solutions/gg81308
+# Originally from @heptaflex https://www.reddit.com/r/adventofcode/comments/kfh5gn/
 
-import re
+import ast
 
-class Int(int):
-    def __sub__(self, other): return Int(int(self) * other)
-    def __mul__(self, other): return Int(int(self) + other)
-    def __add__(self, other): return Int(int(self) + other)
+class Xformer(ast.NodeTransformer): 
+    def visit_Sub(_, __): return ast.Mult() 
+    def visit_Mult(_, __): return ast.Add()
 
 def evaluate(expr, add_first=False):
-    expr = re.sub(r"(\d+)", r"Int(\1)", expr)
     expr = expr.replace("*", "-")
     if add_first: expr = expr.replace("+", "*")
-    return eval(expr, {"Int": Int})
+
+    root = ast.parse(expr, mode='eval')
+    root = Xformer().visit(root)
+    return eval(compile(root, '', mode='eval'))
 
 TEST = '''\
 1 + 2 * 3 + 4 * 5 + 6
