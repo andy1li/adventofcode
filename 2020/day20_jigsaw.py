@@ -1,50 +1,57 @@
 # https://adventofcode.com/2020/day/20
 
+from advent import iterate
 from collections import defaultdict
+from itertools import chain
 from pprint import pformat 
 from matplotlib import pyplot as plt
 import numpy as np
 
 key = lambda b: min([b, b[::-1]])
+to_dots = lambda grid: { (y, x) for y, x, v in iterate(grid) if v == 255 }
 
 class Tile:
     def __init__(self, id, grid):
         self.id = id 
         self.grid = grid
 
-    def top(self): return self.grid[0]
-    def right(self): return ''.join(row[-1] for row in self.grid)
-    def bottom(self): return self.grid[-1]
-    def left(self): return ''.join(row[0] for row in self.grid)
+    def top(self): return tuple(self.grid[0])
+    def right(self): return tuple(row[-1] for row in self.grid)
+    def bottom(self): return tuple(self.grid[-1])
+    def left(self): return tuple(row[0] for row in self.grid)
     def __repr__(self): return str(self.id)
 
     def __iter__(self): 
         return iter([self.top(), self.right(), self.bottom(), self.left()])
     
-    def rotate(self): self.grid = [''.join(row[::-1]) for row in zip(*self.grid)]
-    def flip(self): self.grid = [''.join(row[::-1]) for row in self.grid]        
+    def rotate(self): self.grid = np.rot90(self.grid)
+    def flip(self): self.grid = np.fliplr(self.grid)
 
-    def align(self, border, side):
+    def all_symmetries(self):
         for _ in range(2):
             for _ in range(4):
-                self_side = getattr(self, side)()
-                if self_side == border: return
+                yield self.grid
                 self.rotate()
             self.flip()
 
-    def to_image(self, crop=True):
-        start, end = (1, -1) if crop else (0, len(self.grid[0]))
-        return np.array([
-            [(x=='#') * 255 for x in row[start:end]] 
-            for row in self.grid[start:end]
-        ], np.uint8)
+    def orient(self, border, side):
+        for _ in self.all_symmetries():
+            self_side = getattr(self, side)()
+            if self_side == border: return
+    
+    def crop(self):
+        return self.grid[1:-1, 1:-1]
+
+    def plot(self):
+        plt.imshow(self.grid)
+        plt.show()
     
 class Snowball(Tile):
     def __init__(self, tile): self.grid = [[tile]]
     def __repr__(self): return pformat(self.grid)
 
     def rotate(self):
-        self.grid = [row[::-1] for row in zip(*self.grid)]
+        self.grid = np.rot90(self.grid)
         for row in self.grid:
             for tile in row: tile.rotate()
 
@@ -58,24 +65,25 @@ class Snowball(Tile):
 
     def roll_on(self, new_bottom):
         assert len(self.bottom()) == len(new_bottom)
-        self.grid.append(new_bottom)
+        self.grid = np.vstack([self.grid, new_bottom])
         self.rotate()
 
-    def to_image(self):
-        return np.vstack([
-            np.hstack([x.to_image() for x in row]) 
+    def merge(self):
+        grid = np.vstack([
+            np.hstack([x.crop() for x in row]) 
             for row in self.grid
         ])
+        return Tile('image', grid)
 
     def step(self, inners, agg):
-        self.prepare(agg) 
+        self.prepare(agg)
         new_bottom = []
         for sb_tile in self.bottom():
             common_border = sb_tile.bottom()
             common_key = key(common_border)
 
             nb_tile = (agg[common_key] - {sb_tile}).pop()
-            nb_tile.align(common_border, 'top')
+            nb_tile.orient(common_border, 'top')
             new_bottom.append(nb_tile)
 
             inners.discard(nb_tile)
@@ -89,6 +97,10 @@ def parse(raw):
     def parse_tile(raw):
         grid = raw.splitlines()
         id = int(grid.pop(0)[5:-1])
+        grid = np.array([
+            [(x=='#')*255 for x in row] 
+            for row in grid
+        ], np.uint8)
         return Tile(id, grid)
     return {parse_tile(r) for r in raw.split('\n\n')}
 
@@ -123,57 +135,39 @@ def reassemble(tiles):
         while inners: inners, agg = snowball.step(inners, agg)
     return snowball
 
+def monster_dots(dots):
+    monster = [
+        '                  # ',
+        '#    ##    ##    ###',
+        ' #  #  #  #  #  #   '
+    ]
+    for dot in dots:
+        m_dots = [ 
+            (dot[0] + y-1, dot[1] + x) 
+            for y, x, v in iterate(monster) 
+            if v == '#' 
+        ]
+        if all((md in dots) for md in m_dots):
+            yield from m_dots
+
 def fst_star(snowball):
     return snowball.top()[0].id * snowball.top()[-1].id * snowball.bottom()[0].id * snowball.bottom()[-1].id
 
-monster = '''\
-                  # 
-#    ##    ##    ###
- #  #  #  #  #  #   '''.splitlines()
-monster = Tile(0, monster).to_image(crop=False)
-
-test = '''\
-.####...#####..#...###..
-#####..#..#.#.####..#.#.
-.#.#...#.###...#.##.##..
-#.#.##.###.#.##.##.#####
-..##.###.####..#.####.##
-...#.#..##.##...#..#..##
-#.##.#..#.#..#..##.#.#..
-.###.##.....#...###.#...
-#.####.#.#....##.#..#.#.
-##...#..#....#..#...####
-..#.##...###..#.#####..#
-....#.##.#.#####....#...
-..##.##.###.....#.##..#.
-#...#...###..####....##.
-.#.##...#.##.#.#.###...#
-#.###.#..####...##..#...
-#.###...#.##...#.######.
-.###.###.#######..#####.
-..##.#..#..#.#######.###
-#.#..##.########..#..##.
-#.#####..#.#...##..#....
-#....##..#.#########..##
-#...#.....#..##...###.##
-#..###....##.#...##.##.#'''.splitlines()
-test = Tile(0, test).to_image(crop=False)
-
-def snd_star(image):
-    plt.imshow(image)
-    plt.show()
-
-# snd_star(test)
-
+def snd_star(snowball):
+    image = snowball.merge()
+    m_dots = list(chain.from_iterable(
+        monster_dots(to_dots(grid))
+        for grid in image.all_symmetries()
+    ))
+    return len(to_dots(image.grid)) - len(m_dots)
+    
 if __name__ == '__main__':
     snowball = reassemble(parse(open('data/day20_test.in').read()))
     assert fst_star(snowball) == 20899048083289
+    assert snd_star(snowball) == 273
+
     snowball = reassemble(parse(open('data/day20.in').read()))
     print(fst_star(snowball))
+    print(snd_star(snowball))
 
-    # snowball = snowball.to_image()
-    # for _ in range(2):
-    #     for _ in range(4):
-    #         foo(snowball)
-    #         snowball = np.rot90(snowball)
-    #     snowball = np.flip(snowball)
+
