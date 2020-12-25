@@ -21,39 +21,35 @@ class Tile:
     @property
     def edges(self): # 0-3: top right bottom left
         return [*map(tuple, (
-            self.grid[0], self.grid[...,-1],
-            self.grid[-1], self.grid[...,0]
+            self.grid[0], self.grid[...,-1], self.grid[-1], self.grid[...,0]
         ))]
 
-    def all_symmetries(self):
-        for _ in range(2):
-            for _ in range(4):
-                yield self
-                self = self.rotate()
-            self = self.flip()
+    def symmetries(self):
+        for _ in range(4):
+            yield self; yield self.flip()
+            self = self.rotate()
 
     def match(self, agg, side):
         edge = self.edges[side]
         other = next(t for t in agg[key(edge)] if t.id != self.id)
         return next( o
-            for o in other.all_symmetries()
-            if edge == o.edges[(side+2)%4]
+            for o in other.symmetries()
+            if o.edges[(side+2)%4] == edge
         )
 
     def plot(self):
-        plt.imshow(self.grid)
+        plt.imshow(self.grid, cmap='viridis')
+        plt.grid(False)
         plt.show()
 
 def parse(raw):
     def parse_tile(raw):
-        grid = raw.splitlines()
-        id = grid.pop(0)[5:-1]
+        id, *grid = raw.splitlines()
         grid = list(map(tuple, grid))
-        return Tile(id, np.array(grid) == '#')
+        return Tile(id[5:-1], np.array(grid) == '#')
     return {parse_tile(r) for r in raw.split('\n\n')}
 
-key = lambda b: min([b, b[::-1]])
-n_tiles = lambda agg, e: len(agg[key(e)])
+key = lambda edge: min([edge, edge[::-1]])
 
 def aggregate(tiles):  
     agg = defaultdict(list)
@@ -62,10 +58,14 @@ def aggregate(tiles):
             agg[key(edge)] += tile,
     return agg
 
-def is_corner(agg, tile):
-    return sum(n_tiles(agg, e)==1 for e in tile.edges) == 2
+def merge(tiles):
+    grid = np.vstack([np.hstack([x.crop() for x in row]) for row in tiles])
+    return Tile('image', grid)
 
 def assemble(tiles, n=12):
+    n_tiles = lambda edge: len(agg[key(edge)])
+    is_corner = lambda t: sum(n_tiles(e)==1 for e in t.edges) == 2
+
     def extend(tile, side):
         xs = [tile]
         for _ in range(n-1):
@@ -73,31 +73,21 @@ def assemble(tiles, n=12):
         return xs
 
     agg = aggregate(tiles)
-    corners = {t for t in tiles if is_corner(agg, t)}
+    corners = list(filter(is_corner, tiles))
     start = next( c for c in corners 
-        if n_tiles(agg, c.edges[1]) == n_tiles(agg, c.edges[2]) == 2
+        if 2 == n_tiles(c.edges[1]) == n_tiles(c.edges[2])
     )
     tiles = [ extend(x, side=1) for x in extend(start, side=2) ]
-    return corners, tiles
+    return corners, merge(tiles)
 
-def merge(tiles):
-    grid = np.vstack([
-        np.hstack([x.crop() for x in row]) 
-        for row in tiles
-    ])
-    return Tile('image', grid)
-
-def monster_dots(dots):
-    monster = [
-        '                  # ',
-        '#    ##    ##    ###',
-        ' #  #  #  #  #  #   '
-    ]
-    for dot in dots:
-        m_dots = [ 
-            (dot[0] + y-1, dot[1] + x) 
-            for y, x, v in iterate(monster) 
-            if v == '#' 
+def monster_dots(image):
+    monster = ['                  # ',
+               '#    ##    ##    ###',
+               ' #  #  #  #  #  #   ']
+    dots = image.dots()
+    for y, x in dots:
+        m_dots = [ (y + dy-1, x + dx) 
+            for dy, dx, v in iterate(monster) if v == '#' 
         ]
         if all((md in dots) for md in m_dots):
             yield from m_dots
@@ -105,22 +95,18 @@ def monster_dots(dots):
 def fst_star(corners):
     return math.prod(int(c.id) for c in corners)
 
-def snd_star(tiles):
-    image = merge(tiles)
-    m_dots = list(chain.from_iterable(
-        monster_dots(image.dots())
-        for image in image.all_symmetries()
-    ))
+def snd_star(image):
+    m_dots = list(chain(*map(monster_dots, image.symmetries())))
     return len(image.dots()) - len(m_dots)
     
 if __name__ == '__main__':
     tiles = parse(open('data/day20_test.in').read())
-    corners, tiles = assemble(tiles, n=3)
+    corners, image = assemble(tiles, n=3)
     assert fst_star(corners) == 20899048083289
-    assert snd_star(tiles) == 273
+    assert snd_star(image) == 273
     
     tiles = parse(open('data/day20.in').read())
-    corners, tiles = assemble(tiles)
+    corners, image = assemble(tiles)
     print(fst_star(corners))
-    print(snd_star(tiles))
-
+    print(snd_star(image))
+    # image.plot()

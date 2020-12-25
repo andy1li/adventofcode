@@ -37,7 +37,7 @@ def determine_fields(rules, tickets):
 
     s.add( Distinct(list(fields.values())) )
     s.check(); m = s.model()
-
+    print(m)
     return { f: m[v].as_long() for f, v in fields.items() }
 
 def fst_star(rules, tickets): 
