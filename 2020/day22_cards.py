@@ -2,48 +2,39 @@
 
 from copy import deepcopy
 from collections import deque
-from itertools import count
+from itertools import islice
 
 def parse(raw):
-    def parse_deck(raw):
-        deck = raw.splitlines()[1:]
-        return deque(map(int, deck))
+    parse_deck = lambda raw: deque(map(int, raw.splitlines()[1:]))
     return [*map(parse_deck, raw.split('\n\n'))]
 
-def draw(decks):
-    return [decks[i].popleft() for i in [0, 1]]
+def combat(drawn, decks, recusive):
+    # optimization thanks to u/curious_sapi3n and Nomen_Heroum:
+    # https://www.reddit.com/r/adventofcode/comments/khyjgv/2020_day_22_solutions/ggpcsnd/
+    if recusive and all(drawn[i] <= len(decks[i]) for i in [0, 1]):
+        subgame = [deque(islice(decks[i], 0, drawn[i])) for i in [0, 1]] 
+        if max(subgame[0]) > max(subgame[1]): return 0
+        else: return play(subgame, recusive=True)
+    else: 
+        return drawn[1] > drawn[0]
 
-def can_recurse(decks, drawn):
-    return all(drawn[i] <= len(decks[i]) for i in [0, 1])
+to_tuple = lambda decks: tuple(map(tuple, decks))
 
-def truncated(decks, drawn):
-    return [deque(list(decks[i])[:drawn[i]]) for i in [0, 1]]
-
-def step(decks, recusive):
-    drawn = draw(decks)
-    winner = (
-        play(truncated(decks, drawn), recusive)
-        if recusive and can_recurse(decks, drawn) else
-        drawn[1] > drawn[0]
-    )
-    decks[winner] += [drawn[winner], drawn[1-winner]]
-    return decks
-    
-def to_tuple(decks): 
-    return tuple(map(tuple, decks))
-
-def play(decks, recusive): 
+def play(decks, recusive):
     seen = set()
-    while all(decks): 
+    while all(decks):
         if to_tuple(decks) in seen: return 0
         seen.add(to_tuple(decks))
-        decks = step(decks, recusive)
-    return int(bool(decks[1]))
+
+        drawn = [decks[i].popleft() for i in [0, 1]]    
+        winner = combat(drawn, decks, recusive)
+        decks[winner] += [drawn[winner], drawn[1-winner]]
+    return bool(decks[1])
 
 def score(decks, recusive=False):
     decks = deepcopy(decks)
     winner = decks[play(decks, recusive=recusive)]
-    return sum(x * i for x, i in zip(reversed(winner), count(1)))
+    return sum(i * x for i, x in enumerate(reversed(winner), 1))
 
 TEST = '''\
 Player 1:
@@ -76,4 +67,3 @@ if __name__ == '__main__':
     decks = parse((open('data/day22.in').read()))
     print(score(decks))
     print(score(decks, recusive=True))
-
