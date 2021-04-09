@@ -24,6 +24,6 @@ TEST = '''\
 if __name__ == '__main__':
     assert boot(TEST, 3) == 112
     assert boot(TEST, 4) == 848
-    raw = open('data/day17.in').readlines()
-    print(boot(raw, 3))
-    print(boot(raw, 4))
+    # raw = open('data/day17.in').readlines()
+    # print(boot(raw, 3))
+    # print(boot(raw, 4))

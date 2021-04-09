@@ -1,12 +1,10 @@
 # https://adventofcode.com/2020/day/23
 
-from itertools import chain, count
 from tqdm import trange
 
 def parse(raw, n):
-    labels = list(map(int, raw)) 
-    if n==10**6: labels += list(range(10, 10**6+1))
-    labels.append(labels[0])
+    labels = list(map(int, raw)) + list(range(10, n+1))
+    labels[-1] = labels[0]
     nexts = [None] * len(labels)
     for a, b in zip(labels, labels[1:]): nexts[a] = b
     return labels[0], nexts
@@ -23,7 +21,7 @@ def prepare(curr, nexts):
 
 def play(raw, n):
     curr, nexts = parse(raw, n)
-    for _ in (trange(n * 10) if n == 10**6 else range(n)):
+    for _ in (trange(n*10) if n == 10**6 else range(n)):
         three, dest = prepare(curr, nexts)
         nexts[curr] = nexts[three[2]]
         nexts[three[2]] = nexts[dest]
