@@ -9,10 +9,10 @@ def parse(raw):
     return [*map(parse_deck, raw.split('\n\n'))]
 
 def combat(drawn, decks, recusive):
-    # optimization thanks to u/curious_sapi3n and Nomen_Heroum:
+    # optimization thanks to u/curious_sapi3n and u/Nomen_Heroum:
     # https://www.reddit.com/r/adventofcode/comments/khyjgv/2020_day_22_solutions/ggpcsnd/
     if recusive and all(drawn[i] <= len(decks[i]) for i in [0, 1]):
-        subgame = [deque(islice(decks[i], 0, drawn[i])) for i in [0, 1]] 
+        subgame = [deque(islice(decks[i], drawn[i])) for i in [0, 1]] 
         if max(subgame[0]) > max(subgame[1]): return 0
         else: return play(subgame, recusive=True)
     else: 
