@@ -1,8 +1,8 @@
 # https://adventofcode.com/2018/day/24
 
-import re
 from bisect import bisect_left as bisect
 from copy import deepcopy
+import re
 
 class Group:
     def __init__(self, raw, army):
@@ -123,7 +123,6 @@ def min_boost(groups):
 
 TEST_A = '''17 units each with 5390 hit points (weak to radiation, bludgeoning) with an attack that does 4507 fire damage at initiative 2
 989 units each with 1274 hit points (immune to fire; weak to bludgeoning, slashing) with an attack that does 25 slashing damage at initiative 3'''.splitlines()
-
 TEST_B = '''801 units each with 4706 hit points (weak to radiation) with an attack that does 116 bludgeoning damage at initiative 1
 4485 units each with 2961 hit points (immune to radiation; weak to fire, cold) with an attack that does 12 slashing damage at initiative 4'''.splitlines()
 
@@ -135,7 +134,3 @@ if __name__ == '__main__':
     groups = parse_groups(open('data/day24a.in'), open('data/day24b.in'))
     print(combat_outcome(groups)[0])
     print(min_boost(groups))
-
-    
-
-    
