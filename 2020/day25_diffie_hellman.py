@@ -1,9 +1,8 @@
 # https://adventofcode.com/2020/day/25
 
 from itertools import count
-MOD = 20201227
 
-def step(val, subject=7):
+def step(val, subject=7, MOD=20201227):
     return (subject * val) % MOD
 
 def loop_size(public, val=1, subject=7):
@@ -11,8 +10,8 @@ def loop_size(public, val=1, subject=7):
         val = step(val, subject)
         if val == public: return i
 
-def solve(card, door):
-    val, subject = 1, card
+def solve(card, door, val=1):
+    subject = card
     for _ in range(loop_size(door)): 
         val = step(val, subject)
     return val
