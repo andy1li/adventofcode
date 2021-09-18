@@ -3,16 +3,15 @@
 from collections import defaultdict
 from itertools import count
 
-def spiral():
+def spiral(Δ = 1j):
     i = 1; yield 1, 0 # i, pos
     for side_len in count(3, step=2):
         pos = (1 - 1j) * (side_len//2)
-        dpos = 1j
         for _ in range(4):
             for _ in range(side_len-1):
-                i += 1; pos += dpos
+                i += 1; pos += Δ
                 yield i, pos
-            dpos *= 1j
+            Δ *= 1j
 
 def fst_star(stop):
     abs_int = lambda x: abs(int(x))
@@ -25,8 +24,8 @@ def snd_star(stop):
     for i, pos in spiral():
         if i == 1: continue
         grid[pos] = sum( 
-            grid[pos+dpos] 
-            for dpos in [
+            grid[pos + Δ] 
+            for Δ in [
                 -1+1j,  1j, 1+1j, 
                 -1   ,      1, 
                 -1-1j, -1j, 1-1j, 
