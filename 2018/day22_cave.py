@@ -8,7 +8,7 @@ import numpy as np
 class Pos(NamedTuple): x: int; y: int
 
 def scan_cave(depth, target, MOD=20183):
-    y_times, x_times = 2, 4
+    y_times, x_times = 2, 3
     cave = np.zeros((target.y*y_times, target.x*x_times), dtype=int)
     cave[0,...] = (np.arange(target.x*x_times) * 16807 + depth) % MOD
     cave[...,0] = (np.arange(target.y*y_times) * 48271 + depth) % MOD
@@ -63,11 +63,9 @@ def snd_star(cave, target):
 
 if __name__ == '__main__':
     cave = scan_cave(510, Pos(10, 10))
-    print(cave[10, 10])
     assert fst_star(cave, Pos(10, 10)) == 114
     assert snd_star(cave, Pos(10, 10)) == 45
 
     cave = scan_cave(10689, Pos(11, 722))
-    print(cave[722, 11])
     print(fst_star(cave, Pos(11, 722)))
     print(snd_star(cave, Pos(11, 722)))
