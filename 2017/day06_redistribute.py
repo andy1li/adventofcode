@@ -7,20 +7,20 @@ def parse(raw):
     return np.array(list(map(int, raw.split())))
 
 def step(memory):
-    n, argmax_ = len(memory), np.argmax(memory)
-    max_, memory[argmax_] = memory[argmax_], 0
-    factor = max_ // n
+    mx, amx = memory.max(), memory.argmax()
+    n, memory[amx] = len(memory), 0
+    factor = mx // n
     memory += factor
-    for i in range(argmax_+1, argmax_+1+(max_-factor*n)):
+    for i in range(amx+1, amx+1+(mx-factor*n)):
         memory[i % n] += 1
     return memory
 
 def solve(memory):
     seen, memory = {}, memory.copy()
     for i in count():
-        if tuple(memory) in seen: 
-            return i, i-seen[ tuple(memory) ]
-        seen[ tuple(memory) ] = i
+        t_m = tuple(memory)
+        if t_m in seen: return i, i-seen[t_m]
+        seen[t_m] = i
         memory = step(memory)
 
 if __name__ == '__main__':
