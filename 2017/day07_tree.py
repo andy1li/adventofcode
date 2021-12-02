@@ -17,6 +17,16 @@ def parse(raw):
 def find_head(P, W):
     return next(disc for disc in W if disc not in P)
 
+def wrong(children_weights):
+    for disc in children_weights:
+        copied = children_weights.copy()
+        del copied[disc]
+        set_weights = set(copied.values())
+        if len(set_weights) == 1:
+            return ( W[disc] 
+            - (children_weights[disc] - set_weights.pop())
+            )
+
 def find_wrong(T, W, head):
 
     def recurse(disc):
@@ -26,18 +36,9 @@ def find_wrong(T, W, head):
             child: recurse(child)
             for child in T[disc]
         }
-
         weights = children_weights.values()
         if len(set(weights)) > 1: 
-            for disc, weight in children_weights.items():
-                copied = children_weights.copy()
-                del copied[disc]
-                set_weights = set(copied.values())
-                if len(set_weights) == 1:
-                    raise ValueError(
-                        W[disc] 
-                    - (children_weights[disc] - set_weights.pop())
-                    )
+            raise ValueError(wrong(children_weights))
 
         return sum(weights) + W[disc]
 
