@@ -24,15 +24,16 @@ class Board:
         return self.grid[mask].sum()
 
 def parse_boards(raw):
-    return list(map(Board, raw.split('\n\n')))
+    return set(map(Board, raw.split('\n\n')))
 
 def play(drawn, boards): 
     scores = {}
     for i, x in enumerate(drawn):
         sofar = drawn[:i+1]
-        for b in boards:
-            if b.has_won(sofar) and (b not in scores):
+        for b in list(boards):
+            if b.has_won(sofar):
                scores[b] = x * b.sum_unmarked(sofar)
+               boards.remove(b)
     return list(scores.values())    
 
 TEST = '''\
@@ -57,8 +58,7 @@ TEST = '''\
 if __name__ == '__main__':
     drawn = [7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1]
     scores = play(drawn, parse_boards(TEST))
-    assert scores[0] == 4512
-    assert scores[-1] == 1924
+    assert (scores[0], scores[-1]) == (4512, 1924)
 
     drawn = [68,30,65,69,5,78,41,73,55,0,76,98,79,42,37,21,9,34,56,33,64,54,24,43,15,58,61,38,12,20,4,26,87,95,94,89,83,74,97,77,67,40,63,88,19,31,81,80,60,14,18,47,93,57,17,90,84,85,48,6,91,7,86,13,51,53,8,16,23,66,36,39,32,82,72,11,52,28,62,70,59,50,1,46,96,71,35,10,25,22,27,99,29,45,44,3,75,92,49,2]
     boards = parse_boards(open('data/day04.in').read())

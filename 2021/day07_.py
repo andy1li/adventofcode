@@ -1,4 +1,4 @@
-# https://adventofcode.com/2021/day/5
+# https://adventofcode.com/2021/day/7
 
 def parse(raw):
     command, x = raw.split()
@@ -27,6 +27,6 @@ if __name__ == '__main__':
     assert fst_star(map(parse, (TEST))) == 150
     assert snd_star(map(parse, (TEST))) == 900
 
-    depths = list(map(parse, open('data/day05.in')))
+    depths = list(map(parse, open('data/day07.in')))
     print(fst_star(depths))
     print(snd_star(depths))
