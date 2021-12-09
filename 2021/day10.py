@@ -24,8 +24,8 @@ down 8
 forward 2'''.splitlines()
 
 if __name__ == '__main__':
-    assert fst_star(map(parse, (TEST))) == 150
-    assert snd_star(map(parse, (TEST))) == 900
+    assert fst_star(map(parse, TEST)) == 150
+    assert snd_star(map(parse, TEST)) == 900
 
     depths = list(map(parse, open('data/day10.in')))
     print(fst_star(depths))
