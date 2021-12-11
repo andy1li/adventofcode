@@ -1,6 +1,6 @@
 # https://adventofcode.com/2021/day/9
 
-from advent import get_neighbor_items, iterate
+from advent import neighbor_items, iterate
 from collections import Counter
 from functools import reduce
 from math import prod
@@ -9,7 +9,7 @@ def fst_star(grid):
     return sum( 1 + int(val)
         for (y, x, val) in iterate(grid)
         if all( int(val) < int(nval)
-            for (ny, nx), nval in get_neighbor_items(grid, y, x)
+            for (ny, nx), nval in neighbor_items(grid, y, x)
         )
     )
 
@@ -17,14 +17,14 @@ def snd_star(grid):
     bfs = [ (y, x, val, (y, x))   
         for (y, x, val) in iterate(grid)
         if all( int(val) < int(nval)
-            for (ny, nx), nval in get_neighbor_items(grid, y, x)
+            for (ny, nx), nval in neighbor_items(grid, y, x)
         )
     ]
     seen = {}
     for (y, x, val, basin) in bfs:
         if (y, x) in seen: continue
         seen[y, x] = basin
-        for (ny, nx), nval in get_neighbor_items(grid, y, x):
+        for (ny, nx), nval in neighbor_items(grid, y, x):
             if int(nval) > int(val) and int(nval) != 9:
                 bfs.append( (ny, nx, nval, basin) )
     return prod( v
