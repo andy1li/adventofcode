@@ -1,32 +1,58 @@
 # https://adventofcode.com/2021/day/17
 
-def parse(raw):
-    command, x = raw.split()
-    return int(x) * DIR[command]
+from collections import namedtuple
+import numpy as np
 
-def fst_star(commands): 
-    pos = sum(commands)
-    return int(pos.real * pos.imag) 
+class Target(namedtuple('Target', 'x_lo, x_hi, y_lo, y_hi')):
+    def hit(self, pos):
+        x, y = pos
+        return (self.x_lo <= x <= self.x_hi 
+            and self.y_lo <= y <= self.y_hi
+        )
 
-def snd_star(commands):
-    pos = aim = 0
-    for c in commands:
-        if not c.real: aim += c
-        else         : pos += c * (1 + aim)
-    return int(pos.real * pos.imag) 
+    def miss(self, pos):
+        x, y = pos
+        return x > self.x_hi or y < self.y_lo
 
-TEST = '''\
-forward 5
-down 5
-forward 8
-up 3
-down 8
-forward 2'''.splitlines()
+class Trajectory:
+    def __init__(self, target, velocity):
+        self.velocity = velocity
+        self.pos = np.array([0, 0])
+        self.max_y = -float('inf')
+        self.hit = False
+        while not target.miss(self.pos):
+            self.step()
+
+    def step(self):
+        self.pos += self.velocity
+        vx, vy = self.velocity            
+        self.velocity = np.array([
+            vx and vx-vx//abs(vx), vy-1
+        ])
+        self.max_y = max(self.max_y, self.pos[1])
+        self.hit = self.hit or target.hit(self.pos)
+
+def fst_star(target, x_hi=200, y_hi=200):
+    ans = -float('inf')
+    for x in range(1, x_hi):
+        for y in range(target.y_lo, y_hi):
+            t = Trajectory(target, np.array([x, y]))
+            if t.hit: ans = max(ans, t.max_y)
+    return ans
+
+def snd_star(target, x_hi=300, y_hi=300):
+    ans = 0
+    for x in range(1, x_hi):
+        for y in range(target.y_lo, y_hi):
+            t = Trajectory(target, np.array([x, y]))
+            if t.hit: ans += 1
+    return ans
 
 if __name__ == '__main__':
-    assert fst_star(map(parse, TEST)) == 150
-    assert snd_star(map(parse, TEST)) == 900
+    target = Target(20, 30, -10, -5)
+    assert fst_star(target) == 45
+    assert snd_star(target) == 112
 
-    depths = list(map(parse, open('data/day17.in')))
-    print(fst_star(depths))
-    print(snd_star(depths))
+    target = Target(217, 240, -126, -69)
+    print(fst_star(target))
+    print(snd_star(target))
