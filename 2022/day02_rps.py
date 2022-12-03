@@ -5,7 +5,7 @@ from typing import List, Tuple
 Round = Tuple[str, str]
 
 def parse_rounds(raw) -> List[Round]:
-    return [line.split() for line in raw.splitlines()]
+    return [line.split() for line in raw]
 
 
 opponent, mine = 'ABC', 'XYZ'
@@ -45,13 +45,13 @@ def snd_star(rounds: List[Round]):
 
 TEST = '''A Y
 B X
-C Z'''
+C Z'''.splitlines()
 
 if __name__ == '__main__':
     rounds = parse_rounds(TEST)
     assert fst_star(rounds) == 15
     assert snd_star(rounds) == 12
 
-    rounds = parse_rounds(open('data/day02.in').read())
+    rounds = parse_rounds(open('data/day02.in'))
     print(fst_star(rounds))
     print(snd_star(rounds))
