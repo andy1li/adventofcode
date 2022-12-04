@@ -5,9 +5,6 @@ from typing import Set, Tuple
 
 Rucksack = Tuple[Set[str], Set[str]]
 
-def parse_rucksacks(raw):
-    return [line.strip() for line in raw]
-
 def compartments(line) -> Rucksack:
     length = len(line)
     return set(line[:length//2]), set(line[length//2:])
@@ -35,6 +32,6 @@ if __name__ == '__main__':
     assert fst_star(TEST) == 157
     assert snd_star(TEST) == 70
 
-    rucksacks = parse_rucksacks(open('data/day03.in').readlines())
+    rucksacks = open('data/day03.in').read().splitlines()
     print(fst_star(rucksacks))
     print(snd_star(rucksacks))
