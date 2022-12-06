@@ -1,16 +1,15 @@
 # https://adventofcode.com/2022/day/4
 
 from collections import namedtuple
-from typing import List, Tuple
 
 Segment = namedtuple('Segment', 'lo hi')
-Segments = Tuple[Segment, Segment]
+Segments = tuple[Segment, Segment]
 
-def parse_pairs(raw) -> List[Segments]:
-    def parse_segment(raw_segment: List[str]):
+def parse_pairs(raw) -> list[Segments]:
+    def parse_segment(raw_segment: list[str]):
         return Segment(*map(int, raw_segment))
 
-    def parse_pair(raw_pair: List[str]):
+    def parse_pair(raw_pair: list[str]):
         a, b = raw_pair
         return parse_segment(a.split('-')), parse_segment(b.split('-'))
 
@@ -32,10 +31,10 @@ def overlap(pair: Segments) -> bool:
      or b.lo <= a.hi <= b.hi 
     )
 
-def fst_star(pairs: List[Segments]): 
+def fst_star(pairs: list[Segments]): 
     return sum(map(contain, pairs))
 
-def snd_star(pairs: List[Segments]):
+def snd_star(pairs: list[Segments]):
     return sum(map(overlap, pairs))
 
 TEST = '''2-4,6-8

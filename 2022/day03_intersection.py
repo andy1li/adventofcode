@@ -1,9 +1,8 @@
 # https://adventofcode.com/2022/day/3
 
 from string import ascii_lowercase, ascii_uppercase
-from typing import Set, Tuple 
 
-Rucksack = Tuple[Set[str], Set[str]]
+Rucksack = tuple[set[str], set[str]]
 
 def compartments(line) -> Rucksack:
     length = len(line)

@@ -1,10 +1,8 @@
 # https://adventofcode.com/2022/day/2
 
-from typing import List, Tuple 
+Round = tuple[str, str]
 
-Round = Tuple[str, str]
-
-def parse_rounds(raw) -> List[Round]:
+def parse_rounds(raw) -> list[Round]:
     return [line.split() for line in raw]
 
 
@@ -18,7 +16,7 @@ def shape(i): return i + 1
 def outcome(a, b): 
     return ((b - a) + 1) % 3 * 3
 
-def fst_star(rounds: List[Round]): 
+def fst_star(rounds: list[Round]): 
     def score(round: Round) -> int:        
         a, b = round
         a, b = decode(opponent, a), decode(mine, b)
@@ -34,7 +32,7 @@ def reverse_choose(a, outcome):
     a = decode(opponent, a)
     return ((a + outcome - 1) % 3) + 1
 
-def snd_star(rounds: List[Round]):
+def snd_star(rounds: list[Round]):
     def score(round: Round) -> int:
         a, b = round
         outcome = decode_outcome(b)
