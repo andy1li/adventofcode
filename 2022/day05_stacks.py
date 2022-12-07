@@ -40,7 +40,8 @@ def snd_star(stacks, moves):
         stacks[move.dst] += list(reversed(block))
     return ''.join(s.pop() for s in stacks[1:])
 
-TEST = '''    [D]    
+TEST = '''\
+    [D]    
 [N] [C]    
 [Z] [M] [P]
  1   2   3 

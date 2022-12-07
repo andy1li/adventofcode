@@ -37,7 +37,8 @@ def fst_star(pairs: list[Segments]):
 def snd_star(pairs: list[Segments]):
     return sum(map(overlap, pairs))
 
-TEST = '''2-4,6-8
+TEST = '''\
+2-4,6-8
 2-3,4-5
 5-7,7-9
 2-8,3-7

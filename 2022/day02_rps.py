@@ -41,7 +41,8 @@ def snd_star(rounds: list[Round]):
     return sum(map(score, rounds))
 
 
-TEST = '''A Y
+TEST = '''\
+A Y
 B X
 C Z'''.splitlines()
 

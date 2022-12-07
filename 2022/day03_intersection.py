@@ -20,7 +20,8 @@ def snd_star(raw):
     groups = ([*map(set, g)] for g in groups)
     return sum(map(priority, groups))
 
-TEST = '''vJrwpWtwJgWrhcsFMMfFFhFp
+TEST = '''\
+vJrwpWtwJgWrhcsFMMfFFhFp
 jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
 PmmdzqPrVvPwwTWBwg
 wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
