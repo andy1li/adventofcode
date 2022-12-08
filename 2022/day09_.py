@@ -1,4 +1,4 @@
-# https://adventofcode.com/2022/day/
+# https://adventofcode.com/2022/day/9
 
 def parse(raw):
     pass

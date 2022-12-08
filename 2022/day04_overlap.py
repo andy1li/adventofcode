@@ -17,19 +17,11 @@ def parse_pairs(raw) -> list[Segments]:
 
 def contain(pair: Segments) -> bool:
     a, b = pair
-    return (
-        a.lo <= b.lo and b.hi <= a.hi
-     or b.lo <= a.lo and a.hi <= b.hi
-    )  
+    return (a.lo - b.lo) * (a.hi - b.hi) <= 0
 
 def overlap(pair: Segments) -> bool:
     a, b = pair
-    return (
-        a.lo <= b.lo <= a.hi 
-     or a.lo <= b.hi <= a.hi
-     or b.lo <= a.lo <= b.hi 
-     or b.lo <= a.hi <= b.hi 
-    )
+    return (a.lo - b.hi) * (a.hi - b.lo) <= 0
 
 def fst_star(pairs: list[Segments]): 
     return sum(map(contain, pairs))
