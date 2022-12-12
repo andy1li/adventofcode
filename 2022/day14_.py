@@ -1,4 +1,4 @@
-# https://adventofcode.com/2022/day/12
+# https://adventofcode.com/2022/day/14
 
 def parse(raw):
     pass
@@ -16,6 +16,6 @@ if __name__ == '__main__':
     # print(fst_star(data))
     # print(snd_star(data))
 
-    data = parse(open('data/day12.in'))
+    data = parse(open('data/day1_.in'))
     # print(fst_star(data))
     # print(snd_star(data))
