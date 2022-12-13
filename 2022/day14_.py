@@ -16,6 +16,6 @@ if __name__ == '__main__':
     # print(fst_star(data))
     # print(snd_star(data))
 
-    data = parse(open('data/day1_.in'))
+    data = parse(open('data/day14.in'))
     # print(fst_star(data))
     # print(snd_star(data))
