@@ -1,4 +1,4 @@
-# https://adventofcode.com/2024/day/1
+# https://adventofcode.com/2024/day/2
 
 
 Report = tuple[int, ...]
@@ -45,7 +45,6 @@ if __name__ == "__main__":
     assert fst_star(reports) == 2
     assert snd_star(reports) == 4
 
-    lines = open("2024/data/day02.in").readlines()
-    reports = parse_reports(lines)
+    reports = parse_reports(open("2024/data/day02.in"))
     print(fst_star(reports))
     print(snd_star(reports))

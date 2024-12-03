@@ -31,7 +31,6 @@ if __name__ == "__main__":
     assert fst_star(left, right) == 11
     assert snd_star(left, right) == 31
 
-    lines = open("2024/data/day01.in").readlines()
-    left, right = parse_list(lines)
+    left, right = parse_list(open("2024/data/day01.in"))
     print(fst_star(left, right))
     print(snd_star(left, right))
